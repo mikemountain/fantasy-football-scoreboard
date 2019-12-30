@@ -48,14 +48,12 @@ sudo apt-get install git python-pip
 This installation process might take some time because it will install all the dependencies listed below.
 
 ```
-git clone --recursive https://github.com/riffnshred/nhl-led-scoreboard
-cd nhl-led-scoreboard/
+git clone --recursive https://github.com/mikemountain/fantasy-football-scoreboard
+cd fantasy-football-scoreboard/
 sudo chmod +x install.sh
 sudo ./install.sh
 ```
-[rpi-rgb-led-matrix ](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building): The open-source library that allows the Raspberry Pi to render on the LED matrix.
-
-[pytz](http://pytz.sourceforge.net/), [tzlocal](https://github.com/regebro/tzlocal): Timezone libraries. These allow the scoreboard to convert times to your local timezone.
+[rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building): The open-source library that allows the Raspberry Pi to render on the LED matrix.
 
 [requests](https://requests.kennethreitz.org/en/master/): To call the API and manipulate the received data.
 

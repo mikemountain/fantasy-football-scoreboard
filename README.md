@@ -113,9 +113,10 @@ Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/r
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 ```
-I also created a flag to change which team to fallow instead of the default team. 
+There are also flags to set your sleeper league ID and fantasy team ID to use instead of what's in the config (to show other people their teams quickly, for example)
 ```
---fav-team                Select a team to follow by using it's ID (Default: 8 "Montreal Canadiens") 
+--league-id              Set your sleeper league ID
+--team-id                Set your fantasy team ID
 ```
 
 ## Licensing

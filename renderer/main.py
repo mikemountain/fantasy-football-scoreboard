@@ -253,19 +253,19 @@ class MainRenderer:
     def _draw_big_play(self):
         debug.info('poop')
         # Load the gif file
-        im = Image.open("Assets/goal_light_animation.gif")
+        im = Image.open("Assets/big_play_animation.gif")
         # Set the frame index to 0
         frameNo = 0
         self.canvas.Clear()
         # Go through the frames
-        x = 0
-        while x is not 5:
+        play = True
+        # I think this code was originally made to repeat the gif 5 times, but I need to test it
+        # thus the stupid
+        while play:
             try:
                 im.seek(frameNo)
             except EOFError:
-                x += 1
-                frameNo = 0
-                im.seek(frameNo)
+                play = False
             self.canvas.SetImage(im.convert('RGB'), 0, 0)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             frameNo += 1

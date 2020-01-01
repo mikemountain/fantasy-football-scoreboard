@@ -5,6 +5,7 @@ from calendar import month_abbr
 from renderer.screen_config import screenConfig
 import time
 import debug
+import math
 
 class MainRenderer:
     def __init__(self, matrix, data):
@@ -21,7 +22,6 @@ class MainRenderer:
         self.draw = ImageDraw.Draw(self.image)
         # Load the fonts
         self.font = ImageFont.truetype("fonts/score_large.otf", 16)
-        # self.font = ImageFont.truetype("fonts/Pixel LCD-7.ttf", 8)
         self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8)
 
     def render(self):
@@ -32,9 +32,10 @@ class MainRenderer:
             if self.data.week < 17:
                 debug.info('In season state')
                 #self.__render_game()
-                debug.info('Testing')
-                self._draw_post_game()
-                time.sleep(1800)
+                debug.info('Testing live game')
+                self._draw_game()
+                # self._draw_post_game()
+                # time.sleep(1800)
             # weeks 17+, off season
             else:
                 debug.info('Off season state')
@@ -67,7 +68,7 @@ class MainRenderer:
         debug.info('ping render_game')
 
     def __render_off_season(self):
-        debug.info('ping_day_off')
+        debug.info('ping_off_season')
         self._draw_off_season()
         time.sleep(86400) # sleep 24 hours
 
@@ -166,26 +167,51 @@ class MainRenderer:
             if self.data.matchup:
                 matchup = self.data.matchup
                 game_date = 'WEEK {}'.format(self.data.week)
-                if matchup['user_score'] > user_score or matchup['opp_score'] > opp_score:
-                   self._draw_big_play()
-                # Prepare the data
-                score = '{}-{}'.format(matchup['opp_score'], matchup['user_score'])
+                if matchup['user_score'] > user_score + 5 or matchup['opp_score'] > opp_score + 5:
+                    self._draw_big_play()
+                # Using big and small numbers
+                opp_big, opp_small = divmod(matchup['opp_score'], 1)
+                opp_big = int(opp_big)
+                opp_small = int(round(opp_small, 2) * 100)
+                user_big, user_small = divmod(matchup['user_score'], 1)
+                user_big = int(user_big)
+                user_small = int(round(user_small, 2) * 100)
+                opp_big_size = self.font.getsize(str(opp_big))[0]
+                opp_small_size = self.font_mini.getsize(str(opp_small))[0]
+                user_big_size = self.font.getsize(str(user_big))[0]
+                user_small_size = self.font_mini.getsize(str(user_small))[0]
+                print(user_small)
+                # this is bad form I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
+                opp_big_score = '{}'.format(opp_big)
+                opp_small_score = '{0:02d}'.format(opp_small)
+                user_big_score = '{}'.format(user_big)
+                user_small_score = '{0:02d}'.format(user_small)
+                # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
+                left_offset = int(math.floor(opp_big / 100)) # ((self.width / 2) - (opp_big_size + opp_small_size)) / 2 - 2
+                # eventually may colour differently depending on score advantage
+                opp_colour = (255, 255, 255)
+                user_colour = (255, 255, 255)
+                self.draw.multiline_text((left_offset, 19), opp_big_score, fill=opp_colour, font=self.font, align="left")
+                self.draw.multiline_text((opp_big_size + left_offset, 19), opp_small_score, fill=opp_colour, font=self.font_mini, align="left")
+                self.draw.multiline_text((self.width - user_small_size - user_big_size, 19), user_big_score, fill=user_colour, font=self.font, align="right")
+                self.draw.multiline_text((self.width - user_small_size, 19), user_small_score, fill=user_colour, font=self.font_mini, align="right")
                 # Set the projections on the screen?
                 game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
+                # score_position = center_text(self.font.getsize(score)[0], 32)
                 # Set the position of each logo on screen.
                 self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
-                self.draw.multiline_text((0, 18), score, fill=(255, 255, 255), font=self.font, align="center")
+                # self.draw.multiline_text((score_position, 19), score, fill=(255, 255, 255), font=self.font, align="center")
                 # Open the logo image file
-                opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((18, 18), 1)
-                user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((18, 18), 1)
+                opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((19, 19), 1)
+                user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((19, 19), 1)
                 # Set the position of each logo on screen.
                 opp_team_logo_pos = { "x": 0, "y": 0 }
-                user_team_logo_pos = { "x": 46, "y": 0 }
+                user_team_logo_pos = { "x": 45, "y": 0 }
                 # Put the data on the canvas
                 self.canvas.SetImage(self.image, 0, 0)
                 # Put the images on the canvas
-                self.canvas.SetImage(opp_team_logo.convert("RGB"), opp_team_logo_pos["x"], opp_team_logo_pos["y"])
-                self.canvas.SetImage(user_team_logo.convert("RGB"), user_team_logo_pos["x"], user_team_logo_pos["y"])
+                self.canvas.SetImage(opp_logo.convert("RGB"), opp_team_logo_pos["x"], opp_team_logo_pos["y"])
+                self.canvas.SetImage(user_logo.convert("RGB"), user_team_logo_pos["x"], user_team_logo_pos["y"])
                 # Load the canvas on screen.
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
                 # Refresh the Data image.
@@ -202,6 +228,7 @@ class MainRenderer:
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
                 time.sleep(60)  # sleep for 1 min
 
+    # I think this is fine?
     def _draw_post_game(self):
         self.data.refresh_matchup()
         if self.data.matchup != 0:
@@ -226,9 +253,6 @@ class MainRenderer:
             # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
             left_offset = ((self.width / 2) - (opp_big_size + opp_small_size)) / 2 - 2
             right_offset = ((self.width / 2) - (user_big_size + user_small_size)) / 2 - 2
-            # draw them?
-            print('left', left_offset, 'right', right_offset)
-            print('left size', opp_big_size + opp_small_size, 'right size', user_big_size + user_small_size)
             # end testing
             # Prepare the data
             game_date = 'WEEK {}'.format(self.data.week)
@@ -280,7 +304,7 @@ class MainRenderer:
             time.sleep(60)  # sleep for 1 min
 
     def _draw_big_play(self):
-        debug.info('poop')
+        debug.info('big play woo!')
         # Load the gif file
         im = Image.open("Assets/big_play_animation.gif")
         # Set the frame index to 0

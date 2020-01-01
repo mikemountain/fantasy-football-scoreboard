@@ -4,14 +4,14 @@ from utils import convert_time
 import debug
 
 API_URL = "https://api.sleeper.app/v1/league/"
-DEBUG_URL = "http://192.168.0.183:3000/matchups"
+# DEBUG_URL = "http://192.168.0.183:3000/matchups"
 
 def get_matchup(team_roster_id, league_id, week, teams):
     """
         get all matchups this week and find the matchup you care about
     """
-    # url = '{0}{1}/matchups/{2}'.format(API_URL, league_id, week)
-    url = DEBUG_URL
+    url = '{0}{1}/matchups/{2}'.format(API_URL, league_id, week)
+    # url = DEBUG_URL
     matchup_id = 0
     matchup_info = {}
     try:
@@ -24,11 +24,13 @@ def get_matchup(team_roster_id, league_id, week, teams):
                     matchup_info['user_roster_id'] = team_roster_id
                     matchup_info['user_score'] = matchup['points']
                     matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['avatar']
+                    matchup_info['user_name'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
             for matchup in matchups:
                 if matchup['matchup_id'] == matchup_id and matchup['roster_id'] != team_roster_id:
                     matchup_info['opp_roster_id'] = matchup['roster_id']
                     matchup_info['opp_score'] = matchup['points']
                     matchup_info['opp_av'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['avatar']
+                    matchup_info['opp_name'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['name']
         return matchup_info
     except requests.exceptions.RequestException as e:
         print("Error encountered, Can't reach Sleeper API", e)

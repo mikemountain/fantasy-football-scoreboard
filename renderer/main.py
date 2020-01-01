@@ -20,7 +20,8 @@ class MainRenderer:
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         # Load the fonts
-        self.font = ImageFont.truetype("fonts/score_large.otf", 16)
+        #self.font = ImageFont.truetype("fonts/score_large.otf", 12)
+	self.font = ImageFont.truetype("fonts/retro_computer.ttf", 8)
         self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8)
 
     def render(self):
@@ -30,11 +31,14 @@ class MainRenderer:
             # weeks 1-16, in season
             if self.data.week < 17:
                 debug.info('In season state')
-                self.__render_game()
+                #self.__render_game()
+		self._draw_post_game()
+		time.sleep(1800)
             # weeks 17+, off season
             else:
                 debug.info('Off season state')
-                self.__render_off_season()
+                self._draw_post_game()
+		#self.__render_off_season()
 
     def __render_game(self):
         # check if thursday and before 7pm est -> figure this out in utc
@@ -181,9 +185,11 @@ class MainRenderer:
                 opp_team_logo_pos = { "x": -15, "y": 0 }
                 user_team_logo_pos = { "x": 45, "y": 0 }
                 # Open the logo image file
-                opp_team_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((32, 32), 1)
-                user_team_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((32, 32), 1)
+                opp_team_logo = Image.open('logos/{}.png'.format(matchup['opp_av']))
+                user_team_logo = Image.open('logos/{}.png'.format(matchup['user_av']))
                 # Draw the text on the Data image.
+                opp_team_logo = opp_team_logo.resize((32, 32), 1)
+	        user_team_logo = user_team_logo.resize((32, 32), 1)
                 self.draw.multiline_text((score_position, 15), score, fill=(255, 255, 255), font=self.font, align="center")
                 # self.draw.multiline_text((period_position, -1), period, fill=(255, 255, 255), font=self.font_mini, align="center")
                 # self.draw.multiline_text((time_period_pos, 5), time_period, fill=(255, 255, 255), font=self.font_mini, align="center")
@@ -214,7 +220,8 @@ class MainRenderer:
             matchup = self.data.matchup
             # Prepare the data
             game_date = 'WEEK {}'.format(self.data.week)
-            score = '{}-{}'.format(matchup['opp_score'], matchup['user_score'])
+	    print("opp score ", matchup['opp_score'], " user score ", matchup['user_score'])
+            score = '{} {}'.format(round(matchup['opp_score'], 2), round(matchup['user_score'], 2))
             result = ''
             if matchup['opp_score'] > matchup['user_score']:
                 result = 'LOSS'
@@ -223,17 +230,17 @@ class MainRenderer:
             # Set the position of the information on screen.
             game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
             result_pos = center_text(self.font_mini.getsize(result)[0], 32)
-            score_position = center_text(self.font.getsize(score)[0], 32)
+            #score_position = center_text(self.font_mini.getsize(score)[0], -32)
             # Draw the text on the Data image.
             self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
-            self.draw.multiline_text((score_position, 15), score, fill=(255, 255, 255), font=self.font, align="center")
+            self.draw.multiline_text((0, 18), score, fill=(255, 255, 255), font=self.font, align="center")
             self.draw.multiline_text((result_pos, 5), result, fill=(255, 255, 255), font=self.font_mini, align="center")
             # Open the logo image file
-            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av']))
-            user_logo = Image.open('logos/{}.png'.format(matchup['user_av']))
+            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((18, 18), 1)
+            user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((18, 18), 1)
             # Set the position of each logo on screen.
-            opp_team_logo_pos = { "x": -15, "y": 0 }
-            user_team_logo_pos = { "x": 45, "y": 0 }
+            opp_team_logo_pos = { "x": 0, "y": 0 }
+            user_team_logo_pos = { "x": 46, "y": 0 }
             # Put the data on the canvas
             self.canvas.SetImage(self.image, 0, 0)
             # Put the images on the canvas
@@ -272,6 +279,6 @@ class MainRenderer:
             time.sleep(0.1)
 
     def _draw_off_season(self):
-        self.draw.text((0, -1), 'OFF SEASON\nshould\nprobably\nturn me off', font=self.font_mini)
+        self.draw.text((0, -1), 'OFF SEASON\nshould probably\nturn me off', font=self.font_mini)
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)

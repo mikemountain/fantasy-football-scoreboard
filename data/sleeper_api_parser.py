@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 from utils import convert_time
+import debug
 
 API_URL = "https://api.sleeper.app/v1/league/"
 
@@ -13,9 +14,9 @@ def get_matchup(team_roster_id, league_id, week, teams):
     matchup_info = {}
     try:
         matchups = requests.get(url)
-        matchups = matchups.json()
-        for matchup in matchups:
-            if matchup['roster_id'] == team_roster_id:
+	matchups = matchups.json()
+	for matchup in matchups:
+	    if matchup['roster_id'] == team_roster_id:
                 matchup_id = matchup['matchup_id']
                 matchup_info['matchup_id'] = matchup['matchup_id']
                 matchup_info['user_roster_id'] = team_roster_id
@@ -33,6 +34,8 @@ def get_matchup(team_roster_id, league_id, week, teams):
     except IndexError:
         print("uh oh")
         return matchup_info
+    except Exception as e:
+        print("something bad?", e) 
 
 def get_teams(league_id):
     users_url = '{0}{1}/users'.format(API_URL, league_id)

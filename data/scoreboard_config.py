@@ -7,14 +7,15 @@ class ScoreboardConfig:
     def __init__(self, filename_base, args):
         json = self.__get_config(filename_base)
         # Misc config options
-        self.end_of_day = json["end_of_day"]
+        self.opening_day = json["opening_day"]
         self.debug = json["debug"]
-
-        # config options from arguments. If the argument was passed, use it's value, else use the one from config file.
-        if args.fav_team:
-            self.fav_team_id = args.fav_team
-        else:
-            self.fav_team_id = json['fav_team_id']
+	self.user_id = json["user_id"]
+        self.league_id = json["league_id"]
+	# config options from arguments. If the argument was passed, use it's value, else use the one from config file.
+        #if args.fav_team:
+        #    self.fav_team_id = args.fav_team
+        #else:
+        #    self.fav_team_id = json['fav_team_id']
 
     def read_json(self, filename):
         # Find and return a json file

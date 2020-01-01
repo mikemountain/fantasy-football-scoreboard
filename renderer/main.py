@@ -3,8 +3,9 @@ from rgbmatrix import graphics
 from utils import center_text
 from calendar import month_abbr
 from renderer.screen_config import screenConfig
-import time
+import time as t
 import debug
+import math
 
 class MainRenderer:
     def __init__(self, matrix, data):
@@ -14,15 +15,17 @@ class MainRenderer:
         self.canvas = matrix.CreateFrameCanvas()
         self.width = 64
         self.height = 32
+        self.avsize = 19
         # use this to check if week has changed
         self.week = data.week
         # Create a new data image.
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         # Load the fonts
-        #self.font = ImageFont.truetype("fonts/score_large.otf", 12)
-	self.font = ImageFont.truetype("fonts/retro_computer.ttf", 8)
+        self.font = ImageFont.truetype("fonts/score_large.otf", 16)
         self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8)
+        self.font_vs = ImageFont.truetype("fonts/CG pixel 3x5.ttf", 10)
+        self.font_res = ImageFont.truetype("fonts/CG pixel 3x5.ttf", 6)
 
     def render(self):
         while True:
@@ -30,45 +33,46 @@ class MainRenderer:
             # self.__render_draft()
             # weeks 1-16, in season
             if self.data.week < 17:
-                debug.info('In season state')
-                #self.__render_game()
-		self._draw_post_game()
-		time.sleep(1800)
+                debug.info('testing render and render game')
+                self.__render_game()
+                # debug.info('Testing live game')
+                # self._draw_game()
+                # self._draw_post_game()
+                # t.sleep(1800)
             # weeks 17+, off season
             else:
                 debug.info('Off season state')
-                self._draw_post_game()
-		#self.__render_off_season()
+                self.__render_off_season()
 
     def __render_game(self):
         # check if thursday and before 7pm est -> figure this out in utc
         time = self.data.get_current_date()
         if time.weekday() == 3 and time.hour >= 13:
-            debug.info('Scheduled State')
+            debug.info('Scheduled State, waiting 1 hour')
             self._draw_pregame()
-            time.sleep(1800)
+            t.sleep(1800)
         # thursday before 8pm est
-        elif time.weekday() == 4 and 0 <= time.hour <= 1:
-            debug.info('Pre-Game State')
+        elif time.weekday() == 4 and 0 <= time.hour <= 1 and time.minute <= 15:
+            debug.info('Pre-Game State, waiting 1 minute')
             self._draw_pregame()
-            time.sleep(60)
+            t.sleep(60)
         # tuesday 1am until week change
         elif (time.weekday() == 1 and time.hour > 5) or (1 < time.weekday() < 4):
-            debug.info('Final State')
+            debug.info('Final State, waiting 6 hours')
             self._draw_post_game()
             # sleep 6 hours
-            time.sleep(21600)
+            t.sleep(21600)
         # thursday after 8pm est until tuesday 1am (hopefully else should catch it)
         else:
-            debug.info('Live State')
+            debug.info('Live State, checking every 5s')
             # Draw the current game
             self._draw_game()
         debug.info('ping render_game')
 
     def __render_off_season(self):
-        debug.info('ping_day_off')
+        debug.info('ping_off_season')
         self._draw_off_season()
-        time.sleep(86400) # sleep 24 hours
+        t.sleep(86400) # sleep 24 hours
 
     # need to keep working on this
     def _draw_pregame(self):
@@ -76,22 +80,37 @@ class MainRenderer:
         # get the matchup pics and resize them to 32x32
         if self.data.matchup:
             matchup = self.data.matchup
-            # show a countdown?
-            # game_time_pos = center_text(self.font_mini.getsize(game_time)[0], 32)
-            opp_team_logo_pos = { "x": -15, "y": 0 }
-            user_team_logo_pos = { "x": 45, "y": 0 }
-            # Open the logo image file
-            opp_team_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((32, 32), 1)
-            user_team_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((32, 32), 1)
-            # Draw the text on the Data image.
-            self.draw.multiline_text((score_position, 15), score, fill=(255, 255, 255), font=self.font, align="center")
-            # self.draw.multiline_text((period_position, -1), period, fill=(255, 255, 255), font=self.font_mini, align="center")
-            # self.draw.multiline_text((time_period_pos, 5), time_period, fill=(255, 255, 255), font=self.font_mini, align="center")
+            game_date = 'WEEK {}'.format(self.data.week)
+            avsize = self.avsize
+            vs = 'VS'
+            user_name = matchup['user_name']
+            opp_name = matchup['opp_name']
+            game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
+            vs_pos = center_text(self.font_vs.getsize(vs)[0], 32)
+            self.draw.multiline_text((game_date_pos, 1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
+            self.draw.multiline_text((vs_pos + 1, 15), vs, fill=(255, 255, 255), font=self.font_vs, align="center")
+            if len(user_name) > 12 or len(opp_name) > 12:
+              avsize = 23
+              opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((avsize, avsize), 1)
+              user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((avsize, avsize), 1)
+              # Set the position of each logo on screen.
+              opp_team_logo_pos = { "x": 0, "y": 9 }
+              user_team_logo_pos = { "x": 41, "y": 9 }
+            else:
+              self.draw.multiline_text((0, 6), opp_name, fill=(255, 255, 255), font=self.font_mini, align="left")
+              self.draw.multiline_text((self.width - self.font_mini.getsize(user_name)[0], self.height - self.font_mini.getsize(user_name)[1]), user_name, fill=(255, 255, 255), font=self.font_mini, align="left")
+              # Open the logo image file
+              # Draw the text on the Data image.
+              opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((self.avsize, self.avsize), 1)
+              user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((self.avsize, self.avsize), 1)
+              # Set the position of each logo on screen.
+              opp_team_logo_pos = { "x": 0, "y": 13 }
+              user_team_logo_pos = { "x": 45, "y": 7 }
             # Put the data on the canvas
             self.canvas.SetImage(self.image, 0, 0)
             # Put the images on the canvas
-            self.canvas.SetImage(opp_team_logo.convert("RGB"), opp_team_logo_pos["x"], opp_team_logo_pos["y"])
-            self.canvas.SetImage(user_team_logo.convert("RGB"), user_team_logo_pos["x"], user_team_logo_pos["y"])
+            self.canvas.SetImage(opp_logo.convert("RGB"), opp_team_logo_pos["x"], opp_team_logo_pos["y"])
+            self.canvas.SetImage(user_logo.convert("RGB"), user_team_logo_pos["x"], user_team_logo_pos["y"])
             # Load the canvas on screen.
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             # Refresh the Data image.
@@ -101,55 +120,10 @@ class MainRenderer:
             #(Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
             self.draw.line((0, 0) + (self.width, 0), fill=128)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
-            time.sleep(60)  # sleep for 1 min
+            t.sleep(60)  # sleep for 1 min
             # Refresh canvas
             self.image = Image.new('RGB', (self.width, self.height))
             self.draw = ImageDraw.Draw(self.image)
-    #
-        # if self.data.get_schedule() != 0:
-
-        #     overview = self.data.schedule
-
-        #     # Save when the game start
-        #     game_time = overview['game_time']
-
-        #     # Center the game time on screen.
-        #     game_time_pos = center_text(self.font_mini.getsize(game_time)[0], 32)
-
-        #     # Set the position of each logo
-        #     away_team_logo_pos = self.screen_config.team_logos_pos[str(overview['away_team_id'])]['away']
-        #     home_team_logo_pos = self.screen_config.team_logos_pos[str(overview['home_team_id'])]['home']
-
-        #     # Open the logo image file
-        #     away_team_logo = Image.open('logos/{}.png'.format(self.data.get_teams_info[overview['away_team_id']]['abbreviation']))
-        #     home_team_logo = Image.open('logos/{}.png'.format(self.data.get_teams_info[overview['home_team_id']]['abbreviation']))
-
-        #     # Draw the text on the Data image.
-        #     self.draw.text((22, -1), 'TODAY', font=self.font_mini)
-        #     self.draw.multiline_text((game_time_pos, 5), game_time, fill=(255, 255, 255), font=self.font_mini, align="center")
-        #     self.draw.text((25, 13), 'VS', font=self.font)
-
-        #     # Put the data on the canvas
-        #     self.canvas.SetImage(self.image, 0, 0)
-
-        #     # Put the images on the canvas
-        #     self.canvas.SetImage(away_team_logo.convert("RGB"), away_team_logo_pos["x"], away_team_logo_pos["y"])
-        #     self.canvas.SetImage(home_team_logo.convert("RGB"), home_team_logo_pos["x"], home_team_logo_pos["y"])
-
-        #     # Load the canvas on screen.
-        #     self.canvas = self.matrix.SwapOnVSync(self.canvas)
-
-        #     # Refresh the Data image.
-        #     self.image = Image.new('RGB', (self.width, self.height))
-        #     self.draw = ImageDraw.Draw(self.image)
-        # else:
-        #     #(Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
-        #     self.draw.line((0, 0) + (self.width, 0), fill=128)
-        #     self.canvas = self.matrix.SwapOnVSync(self.canvas)
-        #     time.sleep(60)  # sleep for 1 min
-        #     # Refresh canvas
-        #     self.image = Image.new('RGB', (self.width, self.height))
-        #     self.draw = ImageDraw.Draw(self.image)
 
     def _draw_game(self):
         self.data.refresh_matchup()
@@ -163,41 +137,75 @@ class MainRenderer:
                 self.data.refresh_matchup()
                 self.data.needs_refresh = False
             if self.data.matchup:
+                opp_colour = (255, 255, 255)
+                user_colour = (255, 255, 255)
                 matchup = self.data.matchup
-                # Use This code if you want the goal animation to run only for your fav team's goal
-                # if self.data.fav_team_id == overview['home_team_id']:
-                #     if overview['home_score'] > home_score:
-                #         self._draw_big_play()
-                # else:
-                #     if overview['away_score'] > away_score:
-                #         self._draw_big_play()
-                # Use this code if you want the goal animation to run for both team's goal.
-                # Run the goal animation if there is a goal.
-                if matchup['user_score'] > user_score or matchup['opp_score'] > opp_score:
-                   self._draw_big_play()
-                # Prepare the data
-                score = '{}-{}'.format(matchup['opp_score'], matchup['user_score'])
+                game_date = 'WEEK {}'.format(self.data.week)
+                # small increase in score
+                if matchup['user_score'] > user_score:
+                    user_colour = (165, 200, 50)
+                if matchup['opp_score'] > opp_score:
+                    opp_colour = (165, 200, 50)
+                # decrease in score
+                if matchup['user_score'] < user_score:
+                    user_colour = (175, 25, 25)
+                if matchup['opp_score'] < opp_score:
+                    opp_colour = (175, 25, 25)
+                # big play! 5+ points for someone, turn it gold
+                if matchup['user_score'] > user_score + 5 or matchup['opp_score'] > opp_score + 5:
+                    self._draw_big_play()
+                if matchup['user_score'] > user_score + 5:
+                    user_colour = (255, 215, 0)
+                if matchup['opp_score'] > opp_score + 5:
+                    opp_colour = (255, 215, 0)
+                # Using big and small numbers
+                opp_big, opp_small = divmod(matchup['opp_score'], 1)
+                opp_big = int(opp_big)
+                opp_small = int(round(opp_small, 2) * 100)
+                if opp_small < 10:
+                    opp_small = '0' + str(opp_small)
+                    opp_small_score = '{}'.format(opp_small)
+                else:
+                    opp_small_score = '{0:02d}'.format(opp_small)
+                user_big, user_small = divmod(matchup['user_score'], 1)
+                user_big = int(user_big)
+                user_small = int(round(user_small, 2) * 100)
+                if user_small < 10:
+                    user_small = '0' + str(user_small)
+                    user_small_score = '{}'.format(user_small)
+                else:
+                    user_small_score = '{0:02d}'.format(user_small)
+                opp_big_size = self.font.getsize(str(opp_big))[0]
+                opp_small_size = self.font_mini.getsize(str(opp_small))[0]
+                user_big_size = self.font.getsize(str(user_big))[0]
+                user_small_size = self.font_mini.getsize(str(user_small))[0]
+                print(user_small)
+                # this is bad form I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
+                opp_big_score = '{}'.format(opp_big)
+                user_big_score = '{}'.format(user_big)
+                # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
+                left_offset = int(math.floor(opp_big / 100)) # ((self.width / 2) - (opp_big_size + opp_small_size)) / 2 - 2
+                # eventually may colour differently depending on score advantage
+                self.draw.multiline_text((left_offset, 19), opp_big_score, fill=opp_colour, font=self.font, align="left")
+                self.draw.multiline_text((opp_big_size + left_offset, 19), opp_small_score, fill=opp_colour, font=self.font_mini, align="left")
+                self.draw.multiline_text((self.width - user_small_size - user_big_size, 19), user_big_score, fill=user_colour, font=self.font, align="right")
+                self.draw.multiline_text((self.width - user_small_size, 19), user_small_score, fill=user_colour, font=self.font_mini, align="right")
                 # Set the projections on the screen?
-                # time_period_pos = center_text(self.font_mini.getsize(time_period)[0], 32)
-                score_position = center_text(self.font.getsize(score)[0], 32)
-                # period_position = center_text(self.font_mini.getsize(period)[0], 32)
+                game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
+                # score_position = center_text(self.font.getsize(score)[0], 32)
                 # Set the position of each logo on screen.
-                opp_team_logo_pos = { "x": -15, "y": 0 }
-                user_team_logo_pos = { "x": 45, "y": 0 }
+                self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
                 # Open the logo image file
-                opp_team_logo = Image.open('logos/{}.png'.format(matchup['opp_av']))
-                user_team_logo = Image.open('logos/{}.png'.format(matchup['user_av']))
-                # Draw the text on the Data image.
-                opp_team_logo = opp_team_logo.resize((32, 32), 1)
-	        user_team_logo = user_team_logo.resize((32, 32), 1)
-                self.draw.multiline_text((score_position, 15), score, fill=(255, 255, 255), font=self.font, align="center")
-                # self.draw.multiline_text((period_position, -1), period, fill=(255, 255, 255), font=self.font_mini, align="center")
-                # self.draw.multiline_text((time_period_pos, 5), time_period, fill=(255, 255, 255), font=self.font_mini, align="center")
+                opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((19, 19), 1)
+                user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((19, 19), 1)
+                # Set the position of each logo on screen.
+                opp_team_logo_pos = { "x": 0, "y": 0 }
+                user_team_logo_pos = { "x": 45, "y": 0 }
                 # Put the data on the canvas
                 self.canvas.SetImage(self.image, 0, 0)
                 # Put the images on the canvas
-                self.canvas.SetImage(opp_team_logo.convert("RGB"), opp_team_logo_pos["x"], opp_team_logo_pos["y"])
-                self.canvas.SetImage(user_team_logo.convert("RGB"), user_team_logo_pos["x"], user_team_logo_pos["y"])
+                self.canvas.SetImage(opp_logo.convert("RGB"), opp_team_logo_pos["x"], opp_team_logo_pos["y"])
+                self.canvas.SetImage(user_logo.convert("RGB"), user_team_logo_pos["x"], user_team_logo_pos["y"])
                 # Load the canvas on screen.
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
                 # Refresh the Data image.
@@ -207,40 +215,75 @@ class MainRenderer:
                 opp_score = matchup['opp_score']
                 user_score = matchup['user_score']
                 self.data.needs_refresh = True
-                time.sleep(10)
+                t.sleep(1)
             else:
                 # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
                 self.draw.line((0, 0) + (self.width, 0), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                time.sleep(60)  # sleep for 1 min
+                t.sleep(60)  # sleep for 1 min
 
+    # I think this is fine?
     def _draw_post_game(self):
         self.data.refresh_matchup()
         if self.data.matchup != 0:
             matchup = self.data.matchup
+            # testing
+            # Using big and small numbers
+            # this is so so so terrible, I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
+            opp_big, opp_small = divmod(matchup['opp_score'], 1)
+            opp_big = int(opp_big)
+            opp_small = int(round(opp_small, 2) * 100)
+            if opp_small < 10:
+                opp_small = '0' + str(opp_small)
+                opp_small_score = '{}'.format(opp_small)
+            else:
+                opp_small_score = '{0:02d}'.format(opp_small)
+            user_big, user_small = divmod(matchup['user_score'], 1)
+            user_big = int(user_big)
+            user_small = int(round(user_small, 2) * 100)
+            if user_small < 10:
+                user_small = '0' + str(user_small)
+                user_small_score = '{}'.format(user_small)
+            else:
+                user_small_score = '{0:02d}'.format(user_small)
+            opp_big_size = self.font.getsize(str(opp_big))[0]
+            opp_small_size = self.font_mini.getsize(str(opp_small))[0]
+            user_big_size = self.font.getsize(str(user_big))[0]
+            user_small_size = self.font_mini.getsize(str(user_small))[0]
+            user_big_score = '{}'.format(user_big)
+            opp_big_score = '{}'.format(opp_big)
+            # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
+            left_offset = int(math.floor(opp_big / 100))
+            # end testing
             # Prepare the data
             game_date = 'WEEK {}'.format(self.data.week)
-	    print("opp score ", matchup['opp_score'], " user score ", matchup['user_score'])
-            score = '{} {}'.format(round(matchup['opp_score'], 2), round(matchup['user_score'], 2))
             result = ''
+            opp_colour = (255, 255, 255)
+            user_colour = (255, 255, 255)
             if matchup['opp_score'] > matchup['user_score']:
                 result = 'LOSS'
+                opp_colour = (25, 200, 25)
+                user_colour = (200, 25, 25)
             else:
                 result = 'WIN'
+                opp_colour = (200, 25, 25)
+                user_colour = (25, 200, 25)
+            self.draw.multiline_text((left_offset, 19), opp_big_score, fill=opp_colour, font=self.font, align="left")
+            self.draw.multiline_text((opp_big_size + left_offset, 19), opp_small_score, fill=opp_colour, font=self.font_mini, align="left")
+            self.draw.multiline_text((self.width - user_small_size - user_big_size, 19), user_big_score, fill=user_colour, font=self.font, align="right")
+            self.draw.multiline_text((self.width - user_small_size, 19), user_small_score, fill=user_colour, font=self.font_mini, align="right")
             # Set the position of the information on screen.
             game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
             result_pos = center_text(self.font_mini.getsize(result)[0], 32)
-            #score_position = center_text(self.font_mini.getsize(score)[0], -32)
             # Draw the text on the Data image.
-            self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
-            self.draw.multiline_text((0, 18), score, fill=(255, 255, 255), font=self.font, align="center")
-            self.draw.multiline_text((result_pos, 5), result, fill=(255, 255, 255), font=self.font_mini, align="center")
+            self.draw.multiline_text((game_date_pos, 0), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
+            self.draw.multiline_text((result_pos, 9), result, fill=(255, 255, 255), font=self.font_res, align="center")
             # Open the logo image file
-            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((18, 18), 1)
-            user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((18, 18), 1)
+            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((19, 19), 1)
+            user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((19, 19), 1)
             # Set the position of each logo on screen.
             opp_team_logo_pos = { "x": 0, "y": 0 }
-            user_team_logo_pos = { "x": 46, "y": 0 }
+            user_team_logo_pos = { "x": 45, "y": 0 }
             # Put the data on the canvas
             self.canvas.SetImage(self.image, 0, 0)
             # Put the images on the canvas
@@ -252,13 +295,13 @@ class MainRenderer:
             self.image = Image.new('RGB', (self.width, self.height))
             self.draw = ImageDraw.Draw(self.image)
         else:
-            # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
+            # (Need to make the screen runs) If connection to the API fails, show bottom red line and refresh in 1 min.
             self.draw.line((0, 0) + (self.width, 0), fill=128)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
-            time.sleep(60)  # sleep for 1 min
+            t.sleep(60)  # sleep for 1 min
 
     def _draw_big_play(self):
-        debug.info('poop')
+        debug.info('big play woo!')
         # Load the gif file
         im = Image.open("Assets/big_play_animation.gif")
         # Set the frame index to 0
@@ -268,6 +311,7 @@ class MainRenderer:
         play = True
         # I think this code was originally made to repeat the gif 5 times, but I need to test it
         # thus the stupid
+        # also, it works, so why break it when I'm literally learning python by the seat of my pants?
         while play:
             try:
                 im.seek(frameNo)
@@ -276,9 +320,12 @@ class MainRenderer:
             self.canvas.SetImage(im.convert('RGB'), 0, 0)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             frameNo += 1
-            time.sleep(0.1)
+            t.sleep(0.02)
 
     def _draw_off_season(self):
-        self.draw.text((0, -1), 'OFF SEASON\nshould probably\nturn me off', font=self.font_mini)
+        off_pos = center_text(self.font.getsize("OFF")[0], 32)
+        szn_pos = center_text(self.font.getsize("SEASON")[0], 32)
+        self.draw.multiline_text((off_pos,3), "OFF", fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize("SEASON")[1]+4), "SEASON", fill=(255, 255, 255), font=self.font, align="center")
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)

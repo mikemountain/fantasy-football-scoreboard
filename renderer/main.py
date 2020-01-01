@@ -89,7 +89,7 @@ class MainRenderer:
             vs_pos = center_text(self.font_vs.getsize(vs)[0], 32)
             self.draw.multiline_text((game_date_pos, 1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
             self.draw.multiline_text((vs_pos + 1, 15), vs, fill=(255, 255, 255), font=self.font_vs, align="center")
-            if len(user_name) >= 11 or len(opp_name) >= 11:
+            if len(user_name) > 12 or len(opp_name) > 12:
               avsize = 23
               opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((avsize, avsize), 1)
               user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((avsize, avsize), 1)

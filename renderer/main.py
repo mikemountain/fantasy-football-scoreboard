@@ -20,8 +20,8 @@ class MainRenderer:
         self.image = Image.new('RGB', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.image)
         # Load the fonts
-        #self.font = ImageFont.truetype("fonts/score_large.otf", 12)
-	    self.font = ImageFont.truetype("fonts/Pixel LCD-7.ttf", 8)
+        self.font = ImageFont.truetype("fonts/score_large.otf", 16)
+        # self.font = ImageFont.truetype("fonts/Pixel LCD-7.ttf", 8)
         self.font_mini = ImageFont.truetype("fonts/04B_24__.TTF", 8)
 
     def render(self):
@@ -33,14 +33,13 @@ class MainRenderer:
                 debug.info('In season state')
                 #self.__render_game()
                 debug.info('Testing')
-                self._draw_big_play()
                 self._draw_post_game()
                 time.sleep(1800)
             # weeks 17+, off season
             else:
                 debug.info('Off season state')
                 self._draw_post_game()
-		#self.__render_off_season()
+        #self.__render_off_season()
 
     def __render_game(self):
         # check if thursday and before 7pm est -> figure this out in utc
@@ -207,29 +206,63 @@ class MainRenderer:
         self.data.refresh_matchup()
         if self.data.matchup != 0:
             matchup = self.data.matchup
+            # testing
+            # Using big and small numbers
+            opp_big, opp_small = divmod(matchup['opp_score'], 1)
+            opp_big = int(opp_big)
+            opp_small = int(round(opp_small, 2) * 100)
+            user_big, user_small = divmod(matchup['user_score'], 1)
+            user_big = int(user_big)
+            user_small = int(round(user_small, 2) * 100)
+            opp_big_size = self.font.getsize(str(opp_big))[0]
+            opp_small_size = self.font_mini.getsize(str(opp_small))[0]
+            user_big_size = self.font.getsize(str(user_big))[0]
+            user_small_size = self.font_mini.getsize(str(user_small))[0]
+            # this is bad form I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
+            opp_big_score = '{}'.format(opp_big)
+            opp_small_score = '{0:02d}'.format(opp_small)
+            user_big_score = '{}'.format(user_big)
+            user_small_score = '{0:02d}'.format(user_small)
+            # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
+            left_offset = ((self.width / 2) - (opp_big_size + opp_small_size)) / 2 - 2
+            right_offset = ((self.width / 2) - (user_big_size + user_small_size)) / 2 - 2
+            # draw them?
+            print('left', left_offset, 'right', right_offset)
+            print('left size', opp_big_size + opp_small_size, 'right size', user_big_size + user_small_size)
+            # end testing
             # Prepare the data
             game_date = 'WEEK {}'.format(self.data.week)
-	        print("opp score ", matchup['opp_score'], " user score ", matchup['user_score'])
-            score = '{} {}'.format(round(matchup['opp_score'], 2), round(matchup['user_score'], 2))
+            print("opp score ", matchup['opp_score'], " user score ", matchup['user_score'])
+            # score = '{} {}'.format(round(matchup['opp_score'], 2), round(matchup['user_score'], 2))
             result = ''
+            opp_colour = (255, 255, 255)
+            user_colour = (255, 255, 255)
             if matchup['opp_score'] > matchup['user_score']:
                 result = 'LOSS'
+                opp_colour = (25, 200, 25)
+                user_colour = (200, 25, 25)
             else:
                 result = 'WIN'
+                opp_colour = (200, 25, 25)
+                user_colour = (25, 200, 25)
+            self.draw.multiline_text((left_offset, 19), opp_big_score, fill=opp_colour, font=self.font, align="left")
+            self.draw.multiline_text((opp_big_size + left_offset, 19), opp_small_score, fill=opp_colour, font=self.font_mini, align="left")
+            self.draw.multiline_text((self.width - user_small_size - user_big_size - right_offset, 19), user_big_score, fill=user_colour, font=self.font, align="right")
+            self.draw.multiline_text((self.width - user_small_size - right_offset, 19), user_small_score, fill=user_colour, font=self.font_mini, align="right")
             # Set the position of the information on screen.
             game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
             result_pos = center_text(self.font_mini.getsize(result)[0], 32)
             #score_position = center_text(self.font_mini.getsize(score)[0], -32)
             # Draw the text on the Data image.
             self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
-            self.draw.multiline_text((0, 18), score, fill=(255, 255, 255), font=self.font, align="center")
+            # self.draw.multiline_text((0, 18), score, fill=(255, 255, 255), font=self.font, align="center")
             self.draw.multiline_text((result_pos, 5), result, fill=(255, 255, 255), font=self.font_mini, align="center")
             # Open the logo image file
-            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((18, 18), 1)
-            user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((18, 18), 1)
+            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((19, 19), 1)
+            user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((19, 19), 1)
             # Set the position of each logo on screen.
             opp_team_logo_pos = { "x": 0, "y": 0 }
-            user_team_logo_pos = { "x": 46, "y": 0 }
+            user_team_logo_pos = { "x": 45, "y": 0 }
             # Put the data on the canvas
             self.canvas.SetImage(self.image, 0, 0)
             # Put the images on the canvas
@@ -257,6 +290,7 @@ class MainRenderer:
         play = True
         # I think this code was originally made to repeat the gif 5 times, but I need to test it
         # thus the stupid
+        # also, it works, so why break it when I'm literally learning python by the seat of my pants?
         while play:
             try:
                 im.seek(frameNo)
@@ -265,7 +299,7 @@ class MainRenderer:
             self.canvas.SetImage(im.convert('RGB'), 0, 0)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             frameNo += 1
-            time.sleep(0.1)
+            time.sleep(0.02)
 
     def _draw_off_season(self):
         self.draw.text((0, -1), 'OFF SEASON\nshould probably\nturn me off', font=self.font_mini)

@@ -1,5 +1,5 @@
 # fantasy-football-scoreboard
-![I promise to change this picture when I actually build my own](imgs/scoreboard.jpg)
+![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
 Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform.
 

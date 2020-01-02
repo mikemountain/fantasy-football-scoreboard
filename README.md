@@ -1,5 +1,5 @@
 # fantasy-football-scoreboard
-![I promise to change this picture when I actually build my own](imgs/scoreboard.jpg)
+![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
 Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform. Please excuse the awful pictures, I am very clearly not a photographer and I still have yet to 3D print a case for this so it's awkward to stand up. I also have bad lighting.
 
@@ -9,7 +9,7 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 ## Features (v0.0.1)
 
 ### Pregame
-Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg). Hoping to incorporate projections in future releases.
+Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.
 
 ### Live scoring updates 
 Starting at ~8pm Eastern Thursday, the score will be updated every 10s until about ~1am Eastern Tuesday. ![live matchup](imgs/live_matchup.jpg) The colours will change red if a score goes down, and green if a score goes up. ![colour score](imgs/score_changes.jpg) There is also a "big play" notifier of when a team's score goes up by more than 5 points, because that's exciting. The team's score will go gold to show who got the big play. ![big play](imgs/big_play_capture.jpg)
@@ -22,12 +22,12 @@ I plan to set this so that it only does these checks during actual game times, b
 The board will stay in a post-game state until the next week, and will easily disappoint you with a quick glance. Loser is red, winner is green, with LOSS or WIN in between for that extra oomph. ![post game recap](imgs/accurate_postgame.jpg)
 
 ### Off season
-It displays a message that it's the off season and you should turn the box off. ![man it's offseason, take a break](imgs/off_season.jpg) You really should.
+It displays a message that it's the off season. ![man it's offseason, take a break](imgs/off_season.jpg) You should just turn it off and plan to be heartbroken again next year.
 
 ## Roadmap
 
 Future plans include:
-* using different platforms (Yahoo and then ESPN most likely (if at all possible))
+* using different platforms (Yahoo first and then ESPN most likely (if at all possible))
 * more efficient score checking (currently hits the Sleeper API once a second from Thursday, 8:15pm Eastern until Tuesday, 1am Eastern. Not ideal.)
 * cycle through league scores on off-game times during the week (Post game could cycle through each matchup's result)
 * finding a better way to set the opening day than a config option (but it's only set once a year so this is pretty low prio)

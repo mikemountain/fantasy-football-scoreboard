@@ -33,13 +33,13 @@ def get_matchup(team_roster_id, league_id, week, teams):
                     matchup_info['opp_name'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['name']
         return matchup_info
     except requests.exceptions.RequestException as e:
-        print(("Error encountered, Can't reach Sleeper API", e))
+        print("Error encountered, Can't reach Sleeper API", e)
         return matchup_info
     except IndexError:
         print("uh oh")
         return matchup_info
     except Exception as e:
-        print(("something bad?", e)) 
+        print("something bad?", e) 
 
 def get_teams(league_id):
     users_url = '{0}{1}/users'.format(API_URL, league_id)

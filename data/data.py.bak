@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import math
-from . import sleeper_api_parser as sleeper
+import sleeper_api_parser as sleeper
 import debug
 
 class Data:

@@ -89,7 +89,7 @@ Open the config.json file from the root folder and change these values:
 * ```user_id``` - I feel like there has to be an easier way to find this info, but right now I run this command ```curl https://api.sleeper.app/v1/league/<league_id>/users | jq '.[] | select(.display_name=="<your_sleeper_username>") | .user_id'```. Obviously make sure to swap in your league_id and Sleeper username
 * ```opening_day``` - there will probably be a better way to get this info but meh, you have to change it once a year. Set it year, month, date format with dashes: 2019-09-05. Make sure it's the Thursday, the NFL Kickoff Game, the date the first game is on!
 
-Now, in a terminal, cd to the nhl-led-scoreboard folder and run this command. 
+Now, in a terminal, cd to the fantasy-football-scoreboard folder and run this command. 
 ```
 sudo python main.py 
 ```

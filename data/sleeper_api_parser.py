@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 from utils import convert_time
+import os
 import debug
 
 API_URL = "https://api.sleeper.app/v1/league/"
@@ -46,6 +47,7 @@ def get_teams(league_id):
     try:
         users = requests.get(users_url)
         users = users.json()
+        get_avatars(users)
         for user in users:
             name = user['display_name']
             avatar = user['avatar']
@@ -91,11 +93,16 @@ def get_roster_id(teams, user_id):
     return user['roster_id']
 
 def get_avatars(teams):
+    logospath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'logos'))
+    if not os.path.exists(logospath):
+        os.makedirs(logospath, 0777)
     for team in teams:
         avatar = team['avatar']
         av_url = 'https://sleepercdn.com/avatars/thumbs/{0}'.format(avatar)
         r = requests.get(av_url, stream=True)
-        filename = '../logos/{0}.png'.format(avatar)
-        with open(filename, 'wb') as fd:
-            for chunk in r.iter_content(chunk_size=128):
-                fd.write(chunk)
+        filename = os.path.join(logospath, '{0}.png'.format(avatar))
+        if not os.path.exists(filename):
+            with open(filename, 'wb') as fd:
+                print(filename)
+                for chunk in r.iter_content(chunk_size=128):
+                    fd.write(chunk)

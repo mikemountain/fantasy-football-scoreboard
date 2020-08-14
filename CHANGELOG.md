@@ -25,3 +25,5 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - checks for weeks being negative (pre-season, duh)
+- avatars weren't getting downloaded
+- hopefully logos dir gets created with proper permissions now

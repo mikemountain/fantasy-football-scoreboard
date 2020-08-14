@@ -8,6 +8,13 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 
 ## Features (v0.0.2)
 
+### Drafting
+If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 
+
+Still working on getting something done for during the draft, that will be one of the next things to be worked on. 
+
+Post draft, for now you'll just be shown a countdown 'til kickoff. Hoping to add more to it soon but we'll see what can be done. ![kickoff when](imgs/kickoff.jpg)
+
 ### Pregame
 Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.
 

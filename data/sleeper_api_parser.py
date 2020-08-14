@@ -41,6 +41,7 @@ def get_matchup(team_roster_id, league_id, week, teams):
         print("something bad?", e)
 
 def get_teams(league_id):
+    debug.info('getting teams')
     users_url = '{0}{1}/users'.format(API_URL, league_id)
     rosters_url = '{0}{1}/rosters'.format(API_URL, league_id)
     user_info = []
@@ -73,6 +74,7 @@ def get_draft(league_id):
     """
         get draft infoooo0o0o0o0o
     """
+    debug.info('getting draft')
     url = '{0}{1}/drafts'.format(API_URL, league_id)
     try:
         drafts = requests.get(url)
@@ -93,15 +95,17 @@ def get_roster_id(teams, user_id):
     return user['roster_id']
 
 def get_avatars(teams):
+    debug.info('getting avatars')
     logospath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'logos'))
     if not os.path.exists(logospath):
         os.makedirs(logospath, 0777)
     for team in teams:
         avatar = team['avatar']
-        av_url = 'https://sleepercdn.com/avatars/thumbs/{0}'.format(avatar)
-        r = requests.get(av_url, stream=True)
         filename = os.path.join(logospath, '{0}.png'.format(avatar))
         if not os.path.exists(filename):
+            debug.info('downloading avatar for {0}'.format(team['display_name']))
+            av_url = 'https://sleepercdn.com/avatars/thumbs/{0}'.format(avatar)
+            r = requests.get(av_url, stream=True)
             with open(filename, 'wb') as fd:
                 print(filename)
                 for chunk in r.iter_content(chunk_size=128):

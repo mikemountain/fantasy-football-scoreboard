@@ -1,12 +1,12 @@
 # fantasy-football-scoreboard
 ![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
-Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform. Please excuse the awful pictures, I am very clearly not a photographer and I still have yet to 3D print a case for this so it's awkward to stand up. I also have bad lighting.
+Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform.
 
 ### Credit and inpsiration
 This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), who based THEIR project off of the [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard). Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
 
-## Features (v0.0.1)
+## Features (v0.0.2)
 
 ### Pregame
 Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.
@@ -33,7 +33,7 @@ Future plans include:
 * finding a better way to set the opening day than a config option (but it's only set once a year so this is pretty low prio)
 * different animations for good plays vs bad plays (nobody wants to see "BIG PLAY" and then see it's your opponent getting the points)
 * cycle through multiple teams in multiple leagues so you don't just have to pick your favourite team (although we all have one best league)
-* maybe some fun stuff for the draft like who just drafted whom and a countdown clock or something I don't know but it'll be flashy
+* maybe some fun stuff for the draft like who just drafted whom and a countdown clock or something I don't know but it'll be flashy (can't do this yet with current sleeper api)
 * analyze your team weaknesses and help with waiver pickups (will not do this)
 
 ## Installation
@@ -126,3 +126,4 @@ There are also flags to set your sleeper league ID and fantasy team ID to use in
 
 ## Licensing
 This project uses the GNU General Public License v3.0. If you intend to sell these, the code must remain open source and you at least have to tell your leaguemates how cool I am (please, I need this).
+

@@ -4,14 +4,12 @@ from utils import convert_time
 import debug
 
 API_URL = "https://api.sleeper.app/v1/league/"
-# DEBUG_URL = "http://192.168.0.183:3000/matchups"
 
 def get_matchup(team_roster_id, league_id, week, teams):
     """
         get all matchups this week and find the matchup you care about
     """
     url = '{0}{1}/matchups/{2}'.format(API_URL, league_id, week)
-    # url = DEBUG_URL
     matchup_id = 0
     matchup_info = {}
     try:
@@ -39,7 +37,7 @@ def get_matchup(team_roster_id, league_id, week, teams):
         print("uh oh")
         return matchup_info
     except Exception as e:
-        print("something bad?", e) 
+        print("something bad?", e)
 
 def get_teams(league_id):
     users_url = '{0}{1}/users'.format(API_URL, league_id)
@@ -68,6 +66,25 @@ def get_teams(league_id):
     except IndexError:
         print("something somehow ended up out of index")
         return 0
+
+def get_draft(league_id):
+    """
+        get draft infoooo0o0o0o0o
+    """
+    url = '{0}{1}/drafts'.format(API_URL, league_id)
+    try:
+        drafts = requests.get(url)
+        drafts = drafts.json()
+        draft = [d for d in drafts if d['season'] == '2020']
+        return draft[0]
+    except requests.exceptions.RequestException as e:
+        print("Error encountered, Can't reach Sleeper API", e)
+        return matchup_info
+    except IndexError:
+        print("uh oh?")
+        return matchup_info
+    except Exception as e:
+        print("something bad?", e) 
 
 def get_roster_id(teams, user_id):
     user = next((item for item in teams if item['id'] == user_id))

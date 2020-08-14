@@ -1,13 +1,12 @@
-from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
 from renderer.main import MainRenderer
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
+from rgbmatrix import RGBMatrix
 from utils import args, led_matrix_options
 from data.data import Data
 import debug
 
 SCRIPT_NAME = "Sleeper FF Scoreboard"
-SCRIPT_VERSION = "0.0.1"
+SCRIPT_VERSION = "0.0.2"
 
 # Get supplied command line arguments
 args = args()

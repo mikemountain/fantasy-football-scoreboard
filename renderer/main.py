@@ -29,16 +29,14 @@ class MainRenderer:
 
     def render(self):
         while True:
-            # todo: check for draft
-            # self.__render_draft()
+            debug.info(self.week)
+            if self.week < 1:
+                debug.info('render draft info?')
+                self.__render_draft()
             # weeks 1-16, in season
-            if self.data.week < 17:
-                debug.info('testing render and render game')
+            elif self.week > 0 and self.week < 17:
+                debug.info('render game')
                 self.__render_game()
-                # debug.info('Testing live game')
-                # self._draw_game()
-                # self._draw_post_game()
-                # t.sleep(1800)
             # weeks 17+, off season
             else:
                 debug.info('Off season state')
@@ -64,7 +62,7 @@ class MainRenderer:
             t.sleep(21600)
         # thursday after 8pm est until tuesday 1am (hopefully else should catch it)
         else:
-            debug.info('Live State, checking every 5s')
+            debug.info('Live State, checking every 1s')
             # Draw the current game
             self._draw_game()
         debug.info('ping render_game')
@@ -73,6 +71,23 @@ class MainRenderer:
         debug.info('ping_off_season')
         self._draw_off_season()
         t.sleep(86400) # sleep 24 hours
+
+    def __render_draft(self):
+        self.data.refresh_draft()
+        # roster = self.data.roster
+        draft_status = self.data.draft_status
+        if draft_status == "pre_draft":
+            debug.info('ping_pre_draft')
+            self._draw_pre_draft()
+            t.sleep(self.data.draft_sleep)
+        elif draft_status == "drafting":
+            debug.info('ping_draft')
+            self._draw_draft()
+            t.sleep(10)
+        else:
+            debug.info('ping_draft_complete')
+            # self._draw_draft_complete()
+            t.sleep(86400)
 
     # need to keep working on this
     def _draw_pregame(self):
@@ -179,7 +194,6 @@ class MainRenderer:
                 opp_small_size = self.font_mini.getsize(str(opp_small))[0]
                 user_big_size = self.font.getsize(str(user_big))[0]
                 user_small_size = self.font_mini.getsize(str(user_small))[0]
-                print(user_small)
                 # this is bad form I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
                 opp_big_score = '{}'.format(opp_big)
                 user_big_score = '{}'.format(user_big)
@@ -220,7 +234,7 @@ class MainRenderer:
                 # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
                 self.draw.line((0, 0) + (self.width, 0), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                t.sleep(60)  # sleep for 1 min
+                t.sleep(1)
 
     # I think this is fine?
     def _draw_post_game(self):
@@ -329,3 +343,26 @@ class MainRenderer:
         self.draw.multiline_text((szn_pos, self.font.getsize("SEASON")[1]+4), "SEASON", fill=(255, 255, 255), font=self.font, align="center")
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+    def _draw_pre_draft(self):
+        draft_dt = self.data.draft_dt
+        off_pos = center_text(self.font.getsize("DRAFT")[0], 32)
+        szn_pos = center_text(self.font.getsize(draft_dt)[0], 32)
+        self.draw.multiline_text((off_pos,3), "DRAFT", fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize(draft_dt)[1]+4), draft_dt, fill=(255, 255, 255), font=self.font, align="center")
+        self.canvas.SetImage(self.image, 0, 0)
+        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        # Refresh the Data image.
+        self.image = Image.new('RGB', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
+
+    def _draw_draft(self):
+        off_pos = center_text(self.font.getsize("TBD")[0], 32)
+        szn_pos = center_text(self.font.getsize("SOON?")[0], 32)
+        self.draw.multiline_text((off_pos,3), "TBD", fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize("SOON?")[1]+4), "SOON?", fill=(255, 255, 255), font=self.font, align="center")
+        self.canvas.SetImage(self.image, 0, 0)
+        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        # Refresh the Data image.
+        self.image = Image.new('RGB', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)

@@ -15,9 +15,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - added a changelog I guess
 - general robustness, it was pretty janky (still is)
 - added a bit of pre-draft/draft stuff (still jank)
+- added countdown to kickoff after draft
 
 ### Changed
 - readme crap
+- made a refresh image function to save space
 
 ### Removed
 

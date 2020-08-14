@@ -21,19 +21,22 @@ class Data:
         self.draft = sleeper.get_draft(self.league_id)
         self.draft_status = self.draft['status']
         self.draft_start = self.draft['start_time']
+        self.refresh_start()
         # Fetch the teams info
         self.teams_info = sleeper.get_teams(self.config.league_id)
         self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
         self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
 
     def get_week(self):
-        # return 5 # testing don't judge me
+        # testing
+        # return 5
         today = datetime.today()
         days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days
         week = int(math.floor((days_since_start / 7) + 1))
         return week
 
     def get_current_date(self):
+        # testing
         # return datetime(2020, 9, 13, 18, 0, 0, 329908) # During
         # return datetime(2020, 9, 15, 18, 0, 0, 329908) # Final
         return datetime.utcnow()
@@ -66,3 +69,11 @@ class Data:
         else:
             self.draft_dt = 'NOT SET'
         self.draft_needs_refresh = False
+
+    def refresh_start(self):
+        self.start_sleep = 43200
+        start_delta = datetime.strptime(self.config.opening_day, "%Y-%m-%d") - datetime.now()
+        if start_delta.days == 1:
+            self.start_dt = '{} DAY'.format(start_delta.days + 1)
+        else:
+            self.start_dt = '{} DAYS'.format(start_delta.days + 1)

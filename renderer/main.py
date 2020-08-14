@@ -29,9 +29,8 @@ class MainRenderer:
 
     def render(self):
         while True:
-            debug.info(self.week)
             if self.week < 1:
-                debug.info('render draft info?')
+                debug.info('render draft info')
                 self.__render_draft()
             # weeks 1-16, in season
             elif self.week > 0 and self.week < 17:
@@ -86,7 +85,7 @@ class MainRenderer:
             t.sleep(10)
         else:
             debug.info('ping_draft_complete')
-            # self._draw_draft_complete()
+            self._draw_draft_complete()
             t.sleep(86400)
 
     # need to keep working on this
@@ -288,7 +287,8 @@ class MainRenderer:
             self.draw.multiline_text((self.width - user_small_size, 19), user_small_score, fill=user_colour, font=self.font_mini, align="right")
             # Set the position of the information on screen.
             game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
-            result_pos = center_text(self.font_mini.getsize(result)[0], 32)
+            result_pos = center_text(self.font_res.getsize(result)[0], 32) # this was font_mini before, was that on purpose?
+            # result_pos = center_text(self.font_mini.getsize(result)[0], 32)
             # Draw the text on the Data image.
             self.draw.multiline_text((game_date_pos, 0), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
             self.draw.multiline_text((result_pos, 9), result, fill=(255, 255, 255), font=self.font_res, align="center")
@@ -344,23 +344,31 @@ class MainRenderer:
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
+    # should 1000000% consolidate these into a single function
     def _draw_pre_draft(self):
         draft_dt = self.data.draft_dt
         off_pos = center_text(self.font.getsize("DRAFT")[0], 32)
         szn_pos = center_text(self.font.getsize(draft_dt)[0], 32)
         self.draw.multiline_text((off_pos,3), "DRAFT", fill=(255, 255, 255), font=self.font, align="center")
         self.draw.multiline_text((szn_pos, self.font.getsize(draft_dt)[1]+4), draft_dt, fill=(255, 255, 255), font=self.font, align="center")
-        self.canvas.SetImage(self.image, 0, 0)
-        self.canvas = self.matrix.SwapOnVSync(self.canvas)
-        # Refresh the Data image.
-        self.image = Image.new('RGB', (self.width, self.height))
-        self.draw = ImageDraw.Draw(self.image)
+        self._refresh_image()
 
+    # will eventually hopefully figure out wtf to do here...
     def _draw_draft(self):
         off_pos = center_text(self.font.getsize("TBD")[0], 32)
         szn_pos = center_text(self.font.getsize("SOON?")[0], 32)
         self.draw.multiline_text((off_pos,3), "TBD", fill=(255, 255, 255), font=self.font, align="center")
         self.draw.multiline_text((szn_pos, self.font.getsize("SOON?")[1]+4), "SOON?", fill=(255, 255, 255), font=self.font, align="center")
+        self._refresh_image()
+
+    def _draw_draft_complete(self):
+        off_pos = center_text(self.font.getsize('KICKOFF IN')[0], 32)
+        szn_pos = center_text(self.font.getsize(self.data.start_dt)[0], 32)
+        self.draw.multiline_text((off_pos,3), 'KICKOFF IN', fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize(self.data.start_dt)[1]+4), self.data.start_dt, fill=(255, 255, 255), font=self.font, align="center")
+        self._refresh_image()
+
+    def _refresh_image(self):
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
         # Refresh the Data image.

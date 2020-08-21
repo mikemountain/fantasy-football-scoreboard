@@ -25,6 +25,7 @@ class Data:
         # Fetch the teams info
         self.teams_info = sleeper.get_teams(self.config.league_id)
         self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
+        self.my_players = self.get_players()
         self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
 
     def get_week(self):
@@ -44,6 +45,13 @@ class Data:
     def refresh_matchup(self):
         self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
         self.needs_refresh = False
+
+    def refresh_rosters(self):
+        self.teams_info = sleeper.get_teams(self.config.league_id)
+
+    def get_players(self):
+        user = next((item for item in self.teams_info if item['id'] == self.user_id))
+        return user['players']
 
     def refresh_draft(self):
         self.draft = sleeper.get_draft(self.league_id)

@@ -344,6 +344,10 @@ class MainRenderer:
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
+    # def _draw_draft(self):
+    #     debug.info('testing this')
+    #     debug.info(self.data.get_players())
+
     # should 1000000% consolidate these into a single function
     def _draw_pre_draft(self):
         draft_dt = self.data.draft_dt

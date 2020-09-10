@@ -9,7 +9,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.0.2] - 2020-08-??
+## [0.0.3] - 2020-09-09
+
+### Added
+- will display the team name instead of username if it's available and fits
+
+### Changed
+- readme
+- if the week is 0, we'll move into pre-game of week 1 now (some ugly code there)
+- removed the player-download until I do something with it
+- countdown stuff got moved to a common function
+- little visual tweaks
+
+### Removed
+- some of the draft stuff because I didn't get it to finish it in time
+- took out --team-id option thing in the args because it wasn't working as I intended, gone til fixed
+
+### Fixed
+- countdown didn't count down to actual gametime, now it does
+
+## [0.0.2] - 2020-08-14
 
 ### Added
 - added a changelog I guess

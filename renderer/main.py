@@ -29,11 +29,12 @@ class MainRenderer:
 
     def render(self):
         while True:
-            if self.week < 1:
+            if self.week < 0:
                 debug.info('render draft info')
+                debug.info(self.data.user_id)
                 self.__render_draft()
             # weeks 1-16, in season
-            elif self.week > 0 and self.week < 17:
+            elif self.week >= 0 and self.week < 17:
                 debug.info('render game')
                 self.__render_game()
             # weeks 17+, off season
@@ -44,7 +45,7 @@ class MainRenderer:
     def __render_game(self):
         # check if thursday and before 7pm est -> figure this out in utc
         time = self.data.get_current_date()
-        if time.weekday() == 3 and time.hour >= 13:
+        if self.week == 0 or (time.weekday() == 3 and time.hour >= 13):
             debug.info('Scheduled State, waiting 1 hour')
             self._draw_pregame()
             t.sleep(1800)
@@ -78,7 +79,7 @@ class MainRenderer:
         if draft_status == "pre_draft":
             debug.info('ping_pre_draft')
             self._draw_pre_draft()
-            t.sleep(self.data.draft_sleep)
+            t.sleep(self.data.sleep)
         elif draft_status == "drafting":
             debug.info('ping_draft')
             self._draw_draft()
@@ -86,23 +87,34 @@ class MainRenderer:
         else:
             debug.info('ping_draft_complete')
             self._draw_draft_complete()
-            t.sleep(86400)
+            t.sleep(self.data.sleep)
 
     # need to keep working on this
     def _draw_pregame(self):
         # get the matchup
         # get the matchup pics and resize them to 32x32
+        # don't you love how messy this is? boy
         if self.data.matchup:
             matchup = self.data.matchup
-            game_date = 'WEEK {}'.format(self.data.week)
+            week = self.data.week
+            if week == 0:
+                week = 1
+            game_date = 'WEEK {}'.format(week)
             avsize = self.avsize
             vs = 'VS'
             user_name = matchup['user_name']
             opp_name = matchup['opp_name']
+            user_team = matchup.get('user_team')
+            opp_team = matchup.get('opp_team')
+            # choose team names that fit
+            if user_team and len(user_team) < 13:
+                user_name = user_team
+            if opp_team and len(opp_team) < 13:
+                opp_name = opp_team
             game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
             vs_pos = center_text(self.font_vs.getsize(vs)[0], 32)
-            self.draw.multiline_text((game_date_pos, 1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
-            self.draw.multiline_text((vs_pos + 1, 15), vs, fill=(255, 255, 255), font=self.font_vs, align="center")
+            self.draw.multiline_text((game_date_pos, 0), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
+            self.draw.multiline_text((vs_pos + 1, 14), vs, fill=(255, 255, 255), font=self.font_vs, align="center")
             if len(user_name) > 12 or len(opp_name) > 12:
               avsize = 23
               opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((avsize, avsize), 1)
@@ -343,6 +355,12 @@ class MainRenderer:
         self.draw.multiline_text((szn_pos, self.font.getsize("SEASON")[1]+4), "SEASON", fill=(255, 255, 255), font=self.font, align="center")
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+    # def _draw_draft(self):
+    #     debug.info('testing this')
+    #     debug.info(self.data.get_players())
+    #     result_pos = center_text(self.font_res.getsize('ROSTER')[0], 32) # this was font_mini before, was that on purpose?
+    #     self.draw.multiline_text((result_pos, 1), result, fill=(255, 255, 255), font=self.font_res, align="center")
 
     # should 1000000% consolidate these into a single function
     def _draw_pre_draft(self):

@@ -3,6 +3,7 @@ from datetime import datetime
 from utils import convert_time
 import os
 import debug
+import json
 
 API_URL = "https://api.sleeper.app/v1/league/"
 
@@ -10,6 +11,9 @@ def get_matchup(team_roster_id, league_id, week, teams):
     """
         get all matchups this week and find the matchup you care about
     """
+    # this is for pre-game of week 1
+    if week == 0:
+        week = 1
     url = '{0}{1}/matchups/{2}'.format(API_URL, league_id, week)
     matchup_id = 0
     matchup_info = {}
@@ -24,12 +28,14 @@ def get_matchup(team_roster_id, league_id, week, teams):
                     matchup_info['user_score'] = matchup['points']
                     matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['avatar']
                     matchup_info['user_name'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
+                    matchup_info['user_team'] = next((item for item in teams if item['roster_id'] == team_roster_id))['team']
             for matchup in matchups:
                 if matchup['matchup_id'] == matchup_id and matchup['roster_id'] != team_roster_id:
                     matchup_info['opp_roster_id'] = matchup['roster_id']
                     matchup_info['opp_score'] = matchup['points']
                     matchup_info['opp_av'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['avatar']
                     matchup_info['opp_name'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['name']
+                    matchup_info['opp_team'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['team']
         return matchup_info
     except requests.exceptions.RequestException as e:
         print("Error encountered, Can't reach Sleeper API", e)
@@ -53,7 +59,8 @@ def get_teams(league_id):
             name = user['display_name']
             avatar = user['avatar']
             user_id = user['user_id']
-            user_dict = {"name": name, "id": user_id, "avatar": avatar}
+            team_name = user['metadata'].get('team_name')
+            user_dict = {"name": name, "id": user_id, "avatar": avatar, "team": team_name}
             user_info.append(user_dict)
         rosters = requests.get(rosters_url)
         rosters = rosters.json()
@@ -61,6 +68,7 @@ def get_teams(league_id):
             for user in user_info:
                 if user['id'] == roster['owner_id']:
                     user['roster_id'] = roster['roster_id']
+                    user['players'] = roster['players']
                     break
         return user_info
     except requests.exceptions.RequestException:
@@ -77,8 +85,10 @@ def get_draft(league_id):
     debug.info('getting draft')
     url = '{0}{1}/drafts'.format(API_URL, league_id)
     try:
+        get_player_list()
         drafts = requests.get(url)
         drafts = drafts.json()
+        # this should obv be variable but it'll change once per year so
         draft = [d for d in drafts if d['season'] == '2020']
         return draft[0]
     except requests.exceptions.RequestException as e:
@@ -110,3 +120,24 @@ def get_avatars(teams):
                 print(filename)
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)
+
+def get_player_list():
+    debug.info('getting list of players')
+    playerspath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+    big_players = os.path.join(playerspath, 'players_big.json')
+    reduced_players = os.path.join(playerspath, 'players.json')
+    # doing this while I figure out how I want to handle it, and to make sure I don't blow anything up
+    if 1 == 0:
+        if not os.path.exists(big_players):
+            debug.info('downloading players')
+            p_url = 'https://api.sleeper.app/v1/players/nfl'
+            r = requests.get(p_url, stream=True)
+            with open(big_players, 'wb') as fd:
+                for chunk in r.iter_content(chunk_size=128):
+                    fd.write(chunk)
+        if not os.path.exists(reduced_players):
+            debug.info('getting shreddy bro')
+            playerdict = json.load(open(big_players))
+            reduceddict = {d['player_id']:d['position'] for d in playerdict.values()}
+            with open(reduced_players, 'wb') as fd:
+                fd.write(json.dumps(reduceddict))

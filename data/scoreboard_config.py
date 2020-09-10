@@ -9,11 +9,14 @@ class ScoreboardConfig:
         # Misc config options
         self.opening_day = json["opening_day"]
         self.debug = json["debug"]
-	self.user_id = json["user_id"]
+        self.user_id = json["user_id"]
         self.league_id = json["league_id"]
-	# config options from arguments. If the argument was passed, use it's value, else use the one from config file.
-        #if args.fav_team:
-        #    self.fav_team_id = args.fav_team
+        # config options from arguments. If the argument was passed, use it, else use the one from config file.
+        # if args.user_id:
+        #     print(args.user_id)
+        #     self.user_id = args.user_id
+        # if args.league_id:
+        #     self.league_id = args.league_id
         #else:
         #    self.fav_team_id = json['fav_team_id']
 

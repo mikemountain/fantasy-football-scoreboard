@@ -6,7 +6,11 @@ Display your favourite fantasy football team score on an raspberry pi powered LE
 ### Credit and inpsiration
 This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), who based THEIR project off of the [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard). Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
 
-## Features (v0.0.2)
+### Donate
+<a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>
+If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
+
+## Features (v0.0.3)
 
 ### Drafting
 If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 

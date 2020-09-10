@@ -42,8 +42,9 @@ def args():
   parser.add_argument("--led-multiplexing", action="store", help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)
 
   # User Options
-  parser.add_argument("--team-id", action="store", help="ID of your fantasy team. Change the default in the config.json", type=int)
-  parser.add_argument("--league-id", action="store", help="ID of your sleeper fantasy league. Change the default in the config.json,", type=int)
+  # these are broken atm
+  # parser.add_argument("--user-id", action="store", help="ID of your fantasy user. Change the default in the config.json", type=int)
+  # parser.add_argument("--league-id", action="store", help="ID of your sleeper fantasy league. Change the default in the config.json,", type=int)
 
   return parser.parse_args()
 

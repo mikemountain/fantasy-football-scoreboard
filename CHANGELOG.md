@@ -9,6 +9,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.4] -2020-09-11
+
+### Added
+
+### Changed
+- readme
+- scores are now getting pulled from different source, updates slower but actually works now so who cares?
+- efficient score checking (only checks during game times on thur/sun/mon, can improve this later too)
+
+### Removed
+- all the draft stuff now because there's no point now
+
+### Fixed
+- technically everything because it didn't actually work before, and now it does. More specifically, I fixed getting the score
+
 ## [0.0.3] - 2020-09-09
 
 ### Added

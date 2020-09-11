@@ -1,6 +1,9 @@
 # fantasy-football-scoreboard
 ![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
+### IMPORTANT NOTE
+So, Sleeper completely changed their API and now I can't get live score updates. This project is essentially worthless now, until I figure out how to read live point updates agan. I apologise to everyone who got their hopes up (myself included) and I really hope that this project doesn't end up a wasted of 100 hours of work.
+
 Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform.
 
 ### Credit and inpsiration

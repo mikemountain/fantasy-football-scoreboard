@@ -1,9 +1,6 @@
 # fantasy-football-scoreboard
 ![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
-### IMPORTANT NOTE
-So, Sleeper completely changed their API and now I can't get live score updates. This project is essentially worthless now, until I figure out how to read live point updates agan. I apologise to everyone who got their hopes up (myself included) and I really hope that this project doesn't end up a wasted of 100 hours of work.
-
 Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform.
 
 ### Credit and inpsiration
@@ -13,7 +10,7 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 <a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>
 If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
 
-## Features (v0.0.3)
+## Features (v0.0.4)
 
 ### Drafting
 If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 
@@ -26,7 +23,7 @@ Post draft, for now you'll just be shown a countdown 'til kickoff. Hoping to add
 Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.
 
 ### Live scoring updates 
-Starting at ~8pm Eastern Thursday, the score will be updated every 10s until about ~1am Eastern Tuesday. ![live matchup](imgs/live_matchup.jpg) The colours will change red if a score goes down, and green if a score goes up. ![colour score](imgs/score_changes.jpg) There is also a "big play" notifier of when a team's score goes up by more than 5 points, because that's exciting. The team's score will go gold to show who got the big play. ![big play](imgs/big_play_capture.jpg)
+Starting at ~8pm Eastern Thursday, the score will be updated every 20s during game times (Thursday 8pm-12am, Sunday 1pm-12am, Monday 8pm-12am). ![live matchup](imgs/live_matchup.jpg) The colours will change red if a score goes down, and green if a score goes up. ![colour score](imgs/score_changes.jpg) There is also a "big play" notifier of when a team's score goes up by more than 5 points, because that's exciting. The team's score will go gold to show who got the big play. ![big play](imgs/big_play_capture.jpg)
 
 Here's a gif that shows you what this would look like (excuse the shaky hands please, I was updating my testing REST API with one hand and filming with the other). ![score gif](imgs/big_play_and_updates.gif)
 
@@ -42,7 +39,6 @@ It displays a message that it's the off season. ![man it's offseason, take a bre
 
 Future plans include:
 * using different platforms (Yahoo first and then ESPN most likely (if at all possible))
-* more efficient score checking (currently hits the Sleeper API once a second from Thursday, 8:15pm Eastern until Tuesday, 1am Eastern. Not ideal.)
 * cycle through league scores on off-game times during the week (Post game could cycle through each matchup's result)
 * finding a better way to set the opening day than a config option (but it's only set once a year so this is pretty low prio)
 * different animations for good plays vs bad plays (nobody wants to see "BIG PLAY" and then see it's your opponent getting the points)

@@ -10,7 +10,8 @@ class Data:
         self.config = config
         # Flag to determine when to refresh data
         self.needs_refresh = True
-        self.draft_needs_refresh = True
+        self.draft_needs_refresh = False
+        self.check_scores = True
         # get team id
         self.user_id = self.config.user_id
         # get league id
@@ -18,14 +19,14 @@ class Data:
         # Get the opening day to calculate what week it is
         self.week = self.get_week()
         # draft status
-        self.draft = sleeper.get_draft(self.league_id)
-        self.draft_status = self.draft['status']
-        self.draft_start = self.draft['start_time']
+        # self.draft = sleeper.get_draft(self.league_id)
+        # self.draft_status = self.draft['status']
+        # self.draft_start = self.draft['start_time']
         self.refresh_start()
         # Fetch the teams info
         self.teams_info = sleeper.get_teams(self.config.league_id)
         self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
-        self.my_players = self.get_players()
+        # self.my_players = self.get_players()
         self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
 
     def get_week(self):
@@ -40,6 +41,12 @@ class Data:
 
     def refresh_matchup(self):
         self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
+        self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        self.needs_refresh = False
+
+    # this looks rough
+    def refresh_scores(self):
+        self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
         self.needs_refresh = False
 
     def refresh_rosters(self):
@@ -84,3 +91,12 @@ class Data:
             new_dt = '{} SECONDS'.format(old_dt.seconds)
             self.sleep = 0.1 # turbo mode let's go
         return new_dt
+
+    def check_if_playing(self):
+        time = self.get_current_date()
+        # thursday, sunday, monday
+        # I gotta find a better way to do this but I ain't doin' it now
+        if (time.weekday() == 4 and time.hour >= 0 and time.hour <= 4) or ((time.weekday() == 6 and time.hour >= 13) or (time.weekday() == 0 and time.hour <= 4)) or ((time.weekday() == 0 and time.hour >= 19) or (time.weekday() == 1 and time.hour <= 4)):
+            self.check_scores = True
+        else:
+            self.check_scores = False

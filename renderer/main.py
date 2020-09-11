@@ -62,7 +62,7 @@ class MainRenderer:
             t.sleep(21600)
         # thursday after 8pm est until tuesday 1am (hopefully else should catch it)
         else:
-            debug.info('Live State, checking every 1s')
+            debug.info('Live State, checking every 20s')
             # Draw the current game
             self._draw_game()
         debug.info('ping render_game')
@@ -154,14 +154,21 @@ class MainRenderer:
     def _draw_game(self):
         self.data.refresh_matchup()
         matchup = self.data.matchup
-        user_score = matchup['user_score']
-        opp_score = matchup['opp_score']
+        user_score = matchup.get('user_score')
+        opp_score = matchup.get('opp_score')
+        extra_sleep = 0
         while True:
             # Refresh the data
-            if self.data.needs_refresh:
+            if self.data.needs_refresh and self.data.check_scores:
                 debug.info('Refresh game matchup')
-                self.data.refresh_matchup()
+                extra_sleep = 0
+                self.data.refresh_scores()
                 self.data.needs_refresh = False
+            else:
+                debug.info('Not refreshing, will update in 1 minute')
+                extra_sleep = 40
+                self.data.check_if_playing()
+                self.data.needs_refresh = True
             if self.data.matchup:
                 opp_colour = (255, 255, 255)
                 user_colour = (255, 255, 255)
@@ -178,7 +185,7 @@ class MainRenderer:
                 if matchup['opp_score'] < opp_score:
                     opp_colour = (175, 25, 25)
                 # big play! 5+ points for someone, turn it gold
-                if matchup['user_score'] > user_score + 5 or matchup['opp_score'] > opp_score + 5:
+                if matchup.get('user_score', 0) > (user_score + 5) or matchup.get('opp_score', 0) > (opp_score + 5):
                     self._draw_big_play()
                 if matchup['user_score'] > user_score + 5:
                     user_colour = (255, 215, 0)
@@ -240,12 +247,12 @@ class MainRenderer:
                 opp_score = matchup['opp_score']
                 user_score = matchup['user_score']
                 self.data.needs_refresh = True
-                t.sleep(1)
+                t.sleep(20 + extra_sleep)
             else:
                 # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
                 self.draw.line((0, 0) + (self.width, 0), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                t.sleep(1)
+                t.sleep(20)
 
     # I think this is fine?
     def _draw_post_game(self):

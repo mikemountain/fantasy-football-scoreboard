@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 from utils import convert_time
+from lxml import html
 import os
 import debug
 import json
@@ -25,14 +26,12 @@ def get_matchup(team_roster_id, league_id, week, teams):
                     matchup_id = matchup['matchup_id']
                     matchup_info['matchup_id'] = matchup['matchup_id']
                     matchup_info['user_roster_id'] = team_roster_id
-                    matchup_info['user_score'] = matchup['points']
                     matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['avatar']
                     matchup_info['user_name'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
                     matchup_info['user_team'] = next((item for item in teams if item['roster_id'] == team_roster_id))['team']
             for matchup in matchups:
                 if matchup['matchup_id'] == matchup_id and matchup['roster_id'] != team_roster_id:
                     matchup_info['opp_roster_id'] = matchup['roster_id']
-                    matchup_info['opp_score'] = matchup['points']
                     matchup_info['opp_av'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['avatar']
                     matchup_info['opp_name'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['name']
                     matchup_info['opp_team'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['team']
@@ -45,6 +44,40 @@ def get_matchup(team_roster_id, league_id, week, teams):
         return matchup_info
     except Exception as e:
         print("something bad?", e)
+
+def get_matchup_points(matchup, league_id):
+    # sleeper unfortunately changed the best way for me to do this
+    # so now this is the work-around until a better solution presents itself
+    print('checking scores btw')
+    try:
+        user_url = 'https://sleeper.app/roster/{0}/{1}'.format(league_id, matchup['user_roster_id'])
+        opp_url = 'https://sleeper.app/roster/{0}/{1}'.format(league_id, matchup['opp_roster_id'])
+        user_info = requests.get(user_url)
+        opp_info = requests.get(opp_url)
+        matchup['user_score'] = parse_score(user_info)
+        matchup['opp_score'] = parse_score(opp_info)
+        return matchup
+    except requests.exceptions.RequestException as e:
+        print("Error encountered, Can't reach Sleeper API", e)
+        return matchup_info
+    except IndexError:
+        print("uh oh")
+        return matchup_info
+    except Exception as e:
+        print("something bad?", e)
+
+def parse_score(user_info):
+    score = 0.0
+    tree = html.fromstring(user_info.content)
+    # oh fuck yeah bud let's duct tape the shit out of this
+    for p in tree.xpath("//div[@class='real ']/text()"):
+        try:
+            fp = float(p)
+            score += fp
+        # this catches the '-' scores
+        except:
+            pass
+    return score
 
 def get_teams(league_id):
     debug.info('getting teams')

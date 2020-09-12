@@ -1,5 +1,5 @@
 #!/bin/bash
-MISC="python2.7-dev python-pillow libxml2-dev libxslt-dev python-lxml"
+PKGS="python2.7-dev python-pillow libxml2-dev libxslt-dev python-lxml"
 
 for pkg in $PKGS ; do
     if [ "dpkg-query -W $pkg | awk {'print $1'} = """ ]; then

@@ -70,7 +70,7 @@ def parse_score(user_info):
     score = 0.0
     tree = html.fromstring(user_info.content)
     # oh fuck yeah bud let's duct tape the shit out of this
-    for p in tree.xpath("//div[@class='real ']/text()"):
+    for p in tree.xpath("//div[@class='players']//div[@class='real ']/text()"):
         try:
             fp = float(p)
             score += fp

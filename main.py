@@ -6,7 +6,7 @@ from data.data import Data
 import debug
 
 SCRIPT_NAME = "Sleeper FF Scoreboard"
-SCRIPT_VERSION = "0.0.3"
+SCRIPT_VERSION = "0.0.4"
 
 # Get supplied command line arguments
 args = args()

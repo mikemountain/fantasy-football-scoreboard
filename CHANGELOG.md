@@ -9,7 +9,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.0.4] -2020-09-11
+## [0.0.4 HOTFIX] - 2020-09-12
+
+### Added
+- update script to make sure all required packages are installed
+
+### Changed
+- added update thing to readme
+- commented out more draft stuff, I should just remove it all but I want to work on it eventually
+
+### Removed
+
+### Fixed
+- grabbed the bench points by accident, now only grabs regular points
+
+## [0.0.4] - 2020-09-11
 
 ### Added
 

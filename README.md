@@ -8,9 +8,13 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 
 ### Donate
 <a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>
+
 If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
 
 ## Features (v0.0.4)
+
+### Updating!
+Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.
 
 ### Drafting
 If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 

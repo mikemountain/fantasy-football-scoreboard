@@ -1,3 +1,6 @@
 /logos
 /testing
 *_config.json
+__pycache__/
+*.py[cod]
+*$py.class

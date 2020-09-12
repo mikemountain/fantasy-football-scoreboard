@@ -13,6 +13,9 @@ If you enjoyed this project — or just feeling generous, consider buying me a b
 
 ## Features (v0.0.4)
 
+### Updating!
+Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.
+
 ### Drafting
 If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 
 

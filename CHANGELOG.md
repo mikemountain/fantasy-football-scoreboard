@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - update script to make sure all required packages are installed
 
 ### Changed
+- added update thing to readme
 - commented out more draft stuff, I should just remove it all but I want to work on it eventually
 
 ### Removed

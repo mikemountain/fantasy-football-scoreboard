@@ -8,6 +8,7 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 
 ### Donate
 <a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>
+
 If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
 
 ## Features (v0.0.4)

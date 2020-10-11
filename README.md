@@ -11,7 +11,7 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 
 If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
 
-## Features (v0.0.4)
+## Features (v0.0.5)
 
 ### Updating!
 Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.

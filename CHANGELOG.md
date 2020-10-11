@@ -7,7 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres as best as I can bother to try 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.0.5] - 2020-10-11
+
+### Added
+- added point diff changes because the green/red is nice but I have a goldfish memory, so now I can see how much the scores have changed by
+
+### Changed
+
+### Removed
+
+### Fixed
+- there'd be a full minute after boot that it wouldn't check scores, fixed
 
 ## [0.0.4 HOTFIX] - 2020-09-12
 

@@ -156,6 +156,7 @@ class MainRenderer:
         matchup = self.data.matchup
         user_score = matchup.get('user_score')
         opp_score = matchup.get('opp_score')
+        self.data.needs_refresh = True
         extra_sleep = 0
         while True:
             # Refresh the data
@@ -170,6 +171,7 @@ class MainRenderer:
                 self.data.check_if_playing()
                 self.data.needs_refresh = True
             if self.data.matchup:
+                # colours
                 opp_colour = (255, 255, 255)
                 user_colour = (255, 255, 255)
                 matchup = self.data.matchup
@@ -208,10 +210,14 @@ class MainRenderer:
                     user_small_score = '{}'.format(user_small)
                 else:
                     user_small_score = '{0:02d}'.format(user_small)
+                opp_diff = '{:0.2f}'.format(abs(opp_score - matchup['opp_score']))
+                user_diff = '{:0.2f}'.format(abs(user_score - matchup['user_score']))
                 opp_big_size = self.font.getsize(str(opp_big))[0]
                 opp_small_size = self.font_mini.getsize(str(opp_small))[0]
                 user_big_size = self.font.getsize(str(user_big))[0]
                 user_small_size = self.font_mini.getsize(str(user_small))[0]
+                user_diff_size = self.font_mini.getsize(user_diff)[0]
+                opp_diff_size = self.font_mini.getsize(opp_diff)[0]
                 # this is bad form I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
                 opp_big_score = '{}'.format(opp_big)
                 user_big_score = '{}'.format(user_big)
@@ -222,6 +228,11 @@ class MainRenderer:
                 self.draw.multiline_text((opp_big_size + left_offset, 19), opp_small_score, fill=opp_colour, font=self.font_mini, align="left")
                 self.draw.multiline_text((self.width - user_small_size - user_big_size, 19), user_big_score, fill=user_colour, font=self.font, align="right")
                 self.draw.multiline_text((self.width - user_small_size, 19), user_small_score, fill=user_colour, font=self.font_mini, align="right")
+                # diffs
+                if abs(opp_score - matchup['opp_score']) > 0:
+                    self.draw.multiline_text((21, 6), opp_diff, fill=opp_colour, font=self.font_mini, align="left")
+                if abs(user_score - matchup['user_score']) > 0:
+                    self.draw.multiline_text((self.width - 20 - user_diff_size, 12), user_diff, fill=user_colour, font=self.font_mini, align="right")
                 # Set the projections on the screen?
                 game_date_pos = center_text(self.font_mini.getsize(game_date)[0], 32)
                 # score_position = center_text(self.font.getsize(score)[0], 32)

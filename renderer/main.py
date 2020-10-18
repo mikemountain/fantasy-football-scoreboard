@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import str
+from builtins import object
+from past.utils import old_div
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
 from rgbmatrix import graphics
 from utils import center_text
@@ -7,7 +11,7 @@ import time as t
 import debug
 import math
 
-class MainRenderer:
+class MainRenderer(object):
     def __init__(self, matrix, data):
         self.matrix = matrix
         self.data = data
@@ -222,7 +226,7 @@ class MainRenderer:
                 opp_big_score = '{}'.format(opp_big)
                 user_big_score = '{}'.format(user_big)
                 # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
-                left_offset = int(math.floor(opp_big / 100)) # ((self.width / 2) - (opp_big_size + opp_small_size)) / 2 - 2
+                left_offset = int(math.floor(old_div(opp_big, 100))) # ((self.width / 2) - (opp_big_size + opp_small_size)) / 2 - 2
                 # eventually may colour differently depending on score advantage
                 self.draw.multiline_text((left_offset, 19), opp_big_score, fill=opp_colour, font=self.font, align="left")
                 self.draw.multiline_text((opp_big_size + left_offset, 19), opp_small_score, fill=opp_colour, font=self.font_mini, align="left")
@@ -296,7 +300,7 @@ class MainRenderer:
             user_big_score = '{}'.format(user_big)
             opp_big_score = '{}'.format(opp_big)
             # trying to centre them to make it a bit more a e s t h e t i c (essentially adding padding)
-            left_offset = int(math.floor(opp_big / 100))
+            left_offset = int(math.floor(old_div(opp_big, 100)))
             # end testing
             # Prepare the data
             game_date = 'WEEK {}'.format(self.data.week)

@@ -1,9 +1,14 @@
+from __future__ import division
+from __future__ import absolute_import
+from builtins import next
+from builtins import object
+from past.utils import old_div
 from datetime import datetime, timedelta
 import math
-import sleeper_api_parser as sleeper
+from . import sleeper_api_parser as sleeper
 import debug
 
-class Data:
+class Data(object):
     def __init__(self, config):
         self.idex = 0
         # Save the parsed config
@@ -32,7 +37,7 @@ class Data:
     def get_week(self):
         today = datetime.today()
         days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days
-        week = int(math.floor((days_since_start / 7) + 1))
+        week = int(math.floor((old_div(days_since_start, 7)) + 1))
         return week
 
     def get_current_date(self):
@@ -78,14 +83,14 @@ class Data:
             new_dt = '{} DAY'.format(old_dt.days)
         elif old_dt.days > 0:
             new_dt = '{} DAYS'.format(old_dt.days)
-        elif (old_dt.seconds / 3600) > 0:
-            new_dt = '{} HOURS'.format(old_dt.seconds / 3600)
+        elif (old_div(old_dt.seconds, 3600)) > 0:
+            new_dt = '{} HOURS'.format(old_div(old_dt.seconds, 3600))
             self.sleep = 3600
-        elif (old_dt.seconds / 60) > 0:
-            if (old_dt.seconds / 60) == 1:
-                new_dt = '{} MINUTE'.format(old_dt.seconds / 60)
+        elif (old_div(old_dt.seconds, 60)) > 0:
+            if (old_div(old_dt.seconds, 60)) == 1:
+                new_dt = '{} MINUTE'.format(old_div(old_dt.seconds, 60))
             else:
-                new_dt = '{} MINUTES'.format(old_dt.seconds / 60)
+                new_dt = '{} MINUTES'.format(old_div(old_dt.seconds, 60))
             self.sleep = 60
         else:
             new_dt = '{} SECONDS'.format(old_dt.seconds)

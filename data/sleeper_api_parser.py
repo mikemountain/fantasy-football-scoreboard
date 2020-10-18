@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import next
 import requests
 from datetime import datetime
 from utils import convert_time
@@ -37,13 +39,13 @@ def get_matchup(team_roster_id, league_id, week, teams):
                     matchup_info['opp_team'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['team']
         return matchup_info
     except requests.exceptions.RequestException as e:
-        print("Error encountered, Can't reach Sleeper API", e)
+        print(("Error encountered, Can't reach Sleeper API", e))
         return matchup_info
     except IndexError:
         print("uh oh")
         return matchup_info
     except Exception as e:
-        print("something bad?", e)
+        print(("something bad?", e))
 
 def get_matchup_points(matchup, league_id):
     # sleeper unfortunately changed the best way for me to do this
@@ -58,13 +60,13 @@ def get_matchup_points(matchup, league_id):
         matchup['opp_score'] = parse_score(opp_info)
         return matchup
     except requests.exceptions.RequestException as e:
-        print("Error encountered, Can't reach Sleeper API", e)
+        print(("Error encountered, Can't reach Sleeper API", e))
         return matchup_info
     except IndexError:
         print("uh oh")
         return matchup_info
     except Exception as e:
-        print("something bad?", e)
+        print(("something bad?", e))
 
 def parse_score(user_info):
     score = 0.0
@@ -125,13 +127,13 @@ def get_draft(league_id):
         draft = [d for d in drafts if d['season'] == '2020']
         return draft[0]
     except requests.exceptions.RequestException as e:
-        print("Error encountered, Can't reach Sleeper API", e)
+        print(("Error encountered, Can't reach Sleeper API", e))
         return matchup_info
     except IndexError:
         print("uh oh?")
         return matchup_info
     except Exception as e:
-        print("something bad?", e) 
+        print(("something bad?", e)) 
 
 def get_roster_id(teams, user_id):
     user = next((item for item in teams if item['id'] == user_id))
@@ -141,7 +143,7 @@ def get_avatars(teams):
     debug.info('getting avatars')
     logospath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'logos'))
     if not os.path.exists(logospath):
-        os.makedirs(logospath, 0777)
+        os.makedirs(logospath, 0o777)
     for team in teams:
         avatar = team['avatar']
         filename = os.path.join(logospath, '{0}.png'.format(avatar))
@@ -171,6 +173,6 @@ def get_player_list():
         if not os.path.exists(reduced_players):
             debug.info('getting shreddy bro')
             playerdict = json.load(open(big_players))
-            reduceddict = {d['player_id']:d['position'] for d in playerdict.values()}
+            reduceddict = {d['player_id']:d['position'] for d in list(playerdict.values())}
             with open(reduced_players, 'wb') as fd:
                 fd.write(json.dumps(reduceddict))

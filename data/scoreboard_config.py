@@ -1,9 +1,10 @@
+from builtins import object
 from utils import get_file
 import json
 import os
 
 
-class ScoreboardConfig:
+class ScoreboardConfig(object):
     def __init__(self, filename_base, args):
         json = self.__get_config(filename_base)
         # Misc config options

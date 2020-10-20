@@ -10,8 +10,11 @@ class ScoreboardConfig(object):
         # Misc config options
         self.opening_day = json["opening_day"]
         self.debug = json["debug"]
-        self.user_id = json["user_id"]
-        self.league_id = json["league_id"]
+        self.league = json["league"]
+        self.sleeper.user_id = json["sleeper"]["user_id"]
+        self.sleeper.league_id = json["sleeper"]["league_id"]
+        self.yahoo.consumer_key = json["yahoo"]["consumer_key"]
+        self.yahoo.consumer_secret = json["yahoo"]["consumer_secret"]
         # config options from arguments. If the argument was passed, use it, else use the one from config file.
         # if args.user_id:
         #     print(args.user_id)

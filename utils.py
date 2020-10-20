@@ -1,6 +1,6 @@
 from __future__ import division
 from builtins import range
-from past.utils import old_div
+# from past.utils import old_div
 from rgbmatrix import RGBMatrixOptions, graphics
 import collections
 import argparse
@@ -18,7 +18,8 @@ def get_file(path):
   return os.path.join(dir, path)
 
 def center_text(text_width,center_pos):
-  return abs(center_pos - (old_div(text_width, 2)))
+  # return abs(center_pos - (old_div(text_width, 2)))
+  return abs(center_pos - (text_width / 2))
 
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]

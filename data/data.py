@@ -2,10 +2,11 @@ from __future__ import division
 from __future__ import absolute_import
 from builtins import next
 from builtins import object
-from past.utils import old_div
+# from past.utils import old_div
 from datetime import datetime, timedelta
 import math
 from . import sleeper_api_parser as sleeper
+from . import yahoo_api_parser as yahoo
 import debug
 
 class Data(object):
@@ -17,27 +18,34 @@ class Data(object):
         self.needs_refresh = True
         self.draft_needs_refresh = False
         self.check_scores = True
-        # get team id
-        self.user_id = self.config.user_id
-        # get league id
-        self.league_id = self.config.league_id
-        # Get the opening day to calculate what week it is
+        self.league = self.config.league
         self.week = self.get_week()
+        if self.league == "sleeper":
+            # get team id
+            self.user_id = self.config.sleeper.user_id
+            # get league id
+            self.league_id = self.config.sleeper.league_id
+            self.teams_info = sleeper.get_teams(self.config.league_id)
+            self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
+            self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
+        elif self.league == "yahoo":
+            self.consumer_key = self.config.yahoo.consumer_key
+            self.consumer_sec = self.config.yahoo.consumer_secret
+            self.yahoo_info = yahoo.init(self.consumer_key, self.consumer_sec)
+        # Get the opening day to calculate what week it is
         # draft status
         # self.draft = sleeper.get_draft(self.league_id)
         # self.draft_status = self.draft['status']
         # self.draft_start = self.draft['start_time']
         # self.refresh_start()
         # Fetch the teams info
-        self.teams_info = sleeper.get_teams(self.config.league_id)
-        self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
         # self.my_players = self.get_players()
-        self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
 
     def get_week(self):
         today = datetime.today()
         days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days
-        week = int(math.floor((old_div(days_since_start, 7)) + 1))
+        # week = int(math.floor((old_div(days_since_start, 7)) + 1))
+        week = (days_since_start // 7) + 1
         return week
 
     def get_current_date(self):
@@ -45,57 +53,64 @@ class Data(object):
         return datetime.utcnow()
 
     def refresh_matchup(self):
-        self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
-        self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        if self.league == "sleeper":
+            self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
+            self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        elif self.league == "yahoo":
+            self.matchup = yahoo.get_matchup(self.yahoo_info, self.week)
+            self.matchup = yahoo.get_matchup_points(self.yahoo_info, self.matchup)
         self.needs_refresh = False
 
     # this looks rough
     def refresh_scores(self):
-        self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        if self.league == "sleeper":
+            self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        elif self.league == "yahoo":
+            self.matchup = yahoo.get_matchup_points(self.yahoo_info, self.matchup)
         self.needs_refresh = False
 
-    def refresh_rosters(self):
-        self.teams_info = sleeper.get_teams(self.config.league_id)
+    # def refresh_rosters(self):
+    #     self.teams_info = sleeper.get_teams(self.config.league_id)
 
-    def get_players(self):
-        user = next((item for item in self.teams_info if item['id'] == self.user_id))
-        return user['players']
+    # def get_players(self):
+    #     user = next((item for item in self.teams_info if item['id'] == self.user_id))
+    #     return user['players']
 
-    def refresh_draft(self):
-        self.draft = sleeper.get_draft(self.league_id)
-        self.draft_status = self.draft['status']
-        self.draft_start = self.draft['start_time']
-        self.draft_sleep = 43200
-        if self.draft_start:
-            draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
-            self.draft_dt = self.set_dt(draft_delta)
-        else:
-            self.draft_dt = 'NOT SET'
-        self.draft_needs_refresh = False
+    # def refresh_draft(self):
+    #     self.draft = sleeper.get_draft(self.league_id)
+    #     self.draft_status = self.draft['status']
+    #     self.draft_start = self.draft['start_time']
+    #     self.draft_sleep = 43200
+    #     if self.draft_start:
+    #         draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
+    #         self.draft_dt = self.set_dt(draft_delta)
+    #     else:
+    #         self.draft_dt = 'NOT SET'
+    #     self.draft_needs_refresh = False
 
     # def refresh_start(self):
     #     self.sleep = 43200
     #     start_delta = datetime.strptime("{} 20:20:00 EDT".format(self.config.opening_day), "%Y-%m-%d %H:%M:%S %Z") - datetime.now()
     #     self.start_dt = self.set_dt(start_delta)
 
-    def set_dt(self, old_dt):
-        if old_dt.days == 1:
-            new_dt = '{} DAY'.format(old_dt.days)
-        elif old_dt.days > 0:
-            new_dt = '{} DAYS'.format(old_dt.days)
-        elif (old_div(old_dt.seconds, 3600)) > 0:
-            new_dt = '{} HOURS'.format(old_div(old_dt.seconds, 3600))
-            self.sleep = 3600
-        elif (old_div(old_dt.seconds, 60)) > 0:
-            if (old_div(old_dt.seconds, 60)) == 1:
-                new_dt = '{} MINUTE'.format(old_div(old_dt.seconds, 60))
-            else:
-                new_dt = '{} MINUTES'.format(old_div(old_dt.seconds, 60))
-            self.sleep = 60
-        else:
-            new_dt = '{} SECONDS'.format(old_dt.seconds)
-            self.sleep = 0.1 # turbo mode let's go
-        return new_dt
+    # def set_dt(self, old_dt):
+    #     if old_dt.days == 1:
+    #         new_dt = '{} DAY'.format(old_dt.days)
+    #     elif old_dt.days > 0:
+    #         new_dt = '{} DAYS'.format(old_dt.days)
+    #     elif (old_div(old_dt.seconds, 3600)) > 0:
+    #         new_dt = '{} HOURS'.format(old_div(old_dt.seconds, 3600))
+    #         self.sleep = 3600
+    #     elif (old_div(old_dt.seconds, 60)) > 0:
+    #         if (old_div(old_dt.seconds, 60)) == 1:
+    #             new_dt = '{} MINUTE'.format(old_div(old_dt.seconds, 60))
+    #         else:
+    #             new_dt = '{} MINUTES'.format(old_div(old_dt.seconds, 60))
+    #         self.sleep = 60
+    #     else:
+    #         new_dt = '{} SECONDS'.format(old_dt.seconds)
+    #         self.sleep = 0.1 # turbo mode let's go
+    #     return new_dt
 
     def check_if_playing(self):
         time = self.get_current_date()

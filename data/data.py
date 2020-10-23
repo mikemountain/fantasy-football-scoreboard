@@ -22,15 +22,15 @@ class Data(object):
         self.week = self.get_week()
         if self.league == "sleeper":
             # get team id
-            self.user_id = self.config.sleeper.user_id
+            self.user_id = self.config.user_id
             # get league id
-            self.league_id = self.config.sleeper.league_id
+            self.league_id = self.config.league_id
             self.teams_info = sleeper.get_teams(self.config.league_id)
             self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
             self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
         elif self.league == "yahoo":
-            self.consumer_key = self.config.yahoo.consumer_key
-            self.consumer_sec = self.config.yahoo.consumer_secret
+            self.consumer_key = self.config.consumer_key
+            self.consumer_sec = self.config.consumer_secret
             self.yahoo_info = yahoo.init(self.consumer_key, self.consumer_sec)
         # Get the opening day to calculate what week it is
         # draft status

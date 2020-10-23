@@ -55,6 +55,9 @@ class MainRenderer(object):
             t.sleep(1800)
         # thursday before 8pm est
         elif time.weekday() == 4 and 0 <= time.hour <= 1 and time.minute <= 15:
+            debug.info(time.weekday())
+            debug.info(time.hour)
+            debug.info(time.minute)
             debug.info('Pre-Game State, waiting 1 minute')
             self._draw_pregame()
             t.sleep(60)

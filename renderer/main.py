@@ -98,10 +98,10 @@ class MainRenderer:
             matchup = self.data.matchup
             opp_av = matchup['opp_av']
             user_av = matchup['user_av']
-			if opp_av is None:
-				opp_av = 'noneLogo.png'
-			if user_av is None:
-				user_av = 'noneLogo.png'
+            if opp_av is None:
+                opp_av = 'noneLogo.png'
+            if user_av is None:
+                user_av = 'noneLogo.png'
             week = self.data.week
             if week == 0:
                 week = 1

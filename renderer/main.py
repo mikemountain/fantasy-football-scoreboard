@@ -96,6 +96,12 @@ class MainRenderer:
         # don't you love how messy this is? boy
         if self.data.matchup:
             matchup = self.data.matchup
+            opp_av = matchup['opp_av']
+            user_av = matchup['user_av']
+			if opp_av is None:
+				opp_av = 'noneLogo.png'
+			if user_av is None:
+				user_av = 'noneLogo.png'
             week = self.data.week
             if week == 0:
                 week = 1
@@ -117,8 +123,8 @@ class MainRenderer:
             self.draw.multiline_text((vs_pos + 1, 14), vs, fill=(255, 255, 255), font=self.font_vs, align="center")
             if len(user_name) > 12 or len(opp_name) > 12:
               avsize = 23
-              opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((avsize, avsize), 1)
-              user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((avsize, avsize), 1)
+              opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((avsize, avsize), 1)
+              user_logo = Image.open('logos/{}.png'.format(user_av)).resize((avsize, avsize), 1)
               # Set the position of each logo on screen.
               opp_team_logo_pos = { "x": 0, "y": 9 }
               user_team_logo_pos = { "x": 41, "y": 9 }
@@ -127,8 +133,8 @@ class MainRenderer:
               self.draw.multiline_text((self.width - self.font_mini.getsize(user_name)[0], self.height - self.font_mini.getsize(user_name)[1]), user_name, fill=(255, 255, 255), font=self.font_mini, align="left")
               # Open the logo image file
               # Draw the text on the Data image.
-              opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((self.avsize, self.avsize), 1)
-              user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((self.avsize, self.avsize), 1)
+              opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((self.avsize, self.avsize), 1)
+              user_logo = Image.open('logos/{}.png'.format(user_av)).resize((self.avsize, self.avsize), 1)
               # Set the position of each logo on screen.
               opp_team_logo_pos = { "x": 0, "y": 13 }
               user_team_logo_pos = { "x": 45, "y": 7 }
@@ -154,6 +160,12 @@ class MainRenderer:
     def _draw_game(self):
         self.data.refresh_matchup()
         matchup = self.data.matchup
+        opp_av = matchup['opp_av']
+        user_av = matchup['user_av']
+        if opp_av is None:
+            opp_av = 'noneLogo.png'
+        if user_av is None:
+            user_av = 'noneLogo.png'
         user_score = matchup.get('user_score')
         opp_score = matchup.get('opp_score')
         self.data.needs_refresh = True
@@ -239,8 +251,8 @@ class MainRenderer:
                 # Set the position of each logo on screen.
                 self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
                 # Open the logo image file
-                opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((19, 19), 1)
-                user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((19, 19), 1)
+                opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
+                user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
                 # Set the position of each logo on screen.
                 opp_team_logo_pos = { "x": 0, "y": 0 }
                 user_team_logo_pos = { "x": 45, "y": 0 }
@@ -270,6 +282,12 @@ class MainRenderer:
         self.data.refresh_matchup()
         if self.data.matchup != 0:
             matchup = self.data.matchup
+			opp_av = matchup['opp_av']
+		    user_av = matchup['user_av']
+            if opp_av is None:
+                opp_av = 'noneLogo.png'
+            if user_av is None:
+                user_av = 'noneLogo.png'
             # testing
             # Using big and small numbers
             # this is so so so terrible, I know but idc come at me I'll fix it eventually when I'm not tired and trying random chit
@@ -323,8 +341,8 @@ class MainRenderer:
             self.draw.multiline_text((game_date_pos, 0), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
             self.draw.multiline_text((result_pos, 9), result, fill=(255, 255, 255), font=self.font_res, align="center")
             # Open the logo image file
-            opp_logo = Image.open('logos/{}.png'.format(matchup['opp_av'])).resize((19, 19), 1)
-            user_logo = Image.open('logos/{}.png'.format(matchup['user_av'])).resize((19, 19), 1)
+            opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
+            user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
             # Set the position of each logo on screen.
             opp_team_logo_pos = { "x": 0, "y": 0 }
             user_team_logo_pos = { "x": 45, "y": 0 }

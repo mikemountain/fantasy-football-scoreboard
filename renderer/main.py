@@ -29,12 +29,13 @@ class MainRenderer:
 
     def render(self):
         while True:
+            debug.info(self.week)
             if self.week < 0:
-                self.__render_off_season()
+                # self.__render_off_season()
                 # draft shit doesn't work yet, don't push broken code dummy
-                # debug.info('render draft info')
-                # debug.info(self.data.user_id)
-                # self.__render_draft()
+                debug.info('render draft info')
+                debug.info(self.data.user_id)
+                self.__render_draft()
             # weeks 1-16, in season
             elif self.week >= 0 and self.week < 17:
                 debug.info('render game')
@@ -393,10 +394,10 @@ class MainRenderer:
 
     # will eventually hopefully figure out wtf to do here...
     def _draw_draft(self):
-        off_pos = center_text(self.font.getsize("TBD")[0], 32)
-        szn_pos = center_text(self.font.getsize("SOON?")[0], 32)
-        self.draw.multiline_text((off_pos,3), "TBD", fill=(255, 255, 255), font=self.font, align="center")
-        self.draw.multiline_text((szn_pos, self.font.getsize("SOON?")[1]+4), "SOON?", fill=(255, 255, 255), font=self.font, align="center")
+        off_pos = center_text(self.font.getsize("WOWEE")[0], 32)
+        szn_pos = center_text(self.font.getsize("IT'S NOW")[0], 32)
+        self.draw.multiline_text((off_pos,3), "WOWEE", fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize("IT'S NOW")[1]+4), "IT'S NOW", fill=(255, 255, 255), font=self.font, align="center")
         self._refresh_image()
 
     def _draw_draft_complete(self):

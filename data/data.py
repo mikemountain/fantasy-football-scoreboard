@@ -19,10 +19,10 @@ class Data:
         # Get the opening day to calculate what week it is
         self.week = self.get_week()
         # draft status
-        # self.draft = sleeper.get_draft(self.league_id)
-        # self.draft_status = self.draft['status']
-        # self.draft_start = self.draft['start_time']
-        # self.refresh_start()
+        self.draft = sleeper.get_draft(self.league_id)
+        self.draft_status = self.draft['status']
+        self.draft_start = self.draft['start_time']
+        self.refresh_start()
         # Fetch the teams info
         self.teams_info = sleeper.get_teams(self.config.league_id)
         self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
@@ -56,22 +56,22 @@ class Data:
         user = next((item for item in self.teams_info if item['id'] == self.user_id))
         return user['players']
 
-    # def refresh_draft(self):
-    #     self.draft = sleeper.get_draft(self.league_id)
-    #     self.draft_status = self.draft['status']
-    #     self.draft_start = self.draft['start_time']
-    #     self.draft_sleep = 43200
-    #     if self.draft_start:
-    #         draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
-    #         self.draft_dt = self.set_dt(draft_delta)
-    #     else:
-    #         self.draft_dt = 'NOT SET'
-    #     self.draft_needs_refresh = False
+    def refresh_draft(self):
+        self.draft = sleeper.get_draft(self.league_id)
+        self.draft_status = self.draft['status']
+        self.draft_start = self.draft['start_time']
+        self.draft_sleep = 43200
+        if self.draft_start:
+            draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
+            self.draft_dt = self.set_dt(draft_delta)
+        else:
+            self.draft_dt = 'NOT SET'
+        self.draft_needs_refresh = False
 
-    # def refresh_start(self):
-    #     self.sleep = 43200
-    #     start_delta = datetime.strptime("{} 20:20:00 EDT".format(self.config.opening_day), "%Y-%m-%d %H:%M:%S %Z") - datetime.now()
-    #     self.start_dt = self.set_dt(start_delta)
+    def refresh_start(self):
+        self.sleep = 43200
+        start_delta = datetime.strptime("{} 20:20:00 EDT".format(self.config.opening_day), "%Y-%m-%d %H:%M:%S %Z") - datetime.now()
+        self.start_dt = self.set_dt(start_delta)
 
     def set_dt(self, old_dt):
         if old_dt.days == 1:

@@ -100,7 +100,7 @@ sudo python main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --le
 Open the config.json file from the root folder and change these values:
 
 * ```league_id``` - this value can be found in the Sleeper URL: ```https://sleeper.app/leagues/<league_id>/team```
-* ```user_id``` - I feel like there has to be an easier way to find this info, but right now I run this command ```curl https://api.sleeper.app/v1/league/<league_id>/users | jq '.[] | select(.display_name=="<your_sleeper_username>") | .user_id'```. Obviously make sure to swap in your league_id and Sleeper username
+* ```user_id``` - Run the following command, value will be listed in the output. Use the username that you use to login to Sleeper: ```curl "https://api.sleeper.app/v1/user/<username>"```
 * ```opening_day``` - there will probably be a better way to get this info but meh, you have to change it once a year. Set it year, month, date format with dashes: 2019-09-05. Make sure it's the Thursday, the NFL Kickoff Game, the date the first game is on!
 
 Now, in a terminal, cd to the fantasy-football-scoreboard folder and run this command. 

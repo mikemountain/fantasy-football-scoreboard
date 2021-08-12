@@ -56,17 +56,17 @@ class Data:
         user = next((item for item in self.teams_info if item['id'] == self.user_id))
         return user['players']
 
-    def refresh_draft(self):
-        self.draft = sleeper.get_draft(self.league_id)
-        self.draft_status = self.draft['status']
-        self.draft_start = self.draft['start_time']
-        self.draft_sleep = 43200
-        if self.draft_start:
-            draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
-            self.draft_dt = self.set_dt(draft_delta)
-        else:
-            self.draft_dt = 'NOT SET'
-        self.draft_needs_refresh = False
+    # def refresh_draft(self):
+    #     self.draft = sleeper.get_draft(self.league_id)
+    #     self.draft_status = self.draft['status']
+    #     self.draft_start = self.draft['start_time']
+    #     self.draft_sleep = 43200
+    #     if self.draft_start:
+    #         draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
+    #         self.draft_dt = self.set_dt(draft_delta)
+    #     else:
+    #         self.draft_dt = 'NOT SET'
+    #     self.draft_needs_refresh = False
 
     # def refresh_start(self):
     #     self.sleep = 43200

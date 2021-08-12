@@ -30,9 +30,11 @@ class MainRenderer:
     def render(self):
         while True:
             if self.week < 0:
-                debug.info('render draft info')
-                debug.info(self.data.user_id)
-                self.__render_draft()
+                self.__render_off_season()
+                # draft shit doesn't work yet, don't push broken code dummy
+                # debug.info('render draft info')
+                # debug.info(self.data.user_id)
+                # self.__render_draft()
             # weeks 1-16, in season
             elif self.week >= 0 and self.week < 17:
                 debug.info('render game')
@@ -86,7 +88,7 @@ class MainRenderer:
             t.sleep(10)
         else:
             debug.info('ping_draft_complete')
-            # self._draw_draft_complete()
+            self._draw_draft_complete()
             t.sleep(self.data.sleep)
 
     # need to keep working on this
@@ -397,12 +399,12 @@ class MainRenderer:
         self.draw.multiline_text((szn_pos, self.font.getsize("SOON?")[1]+4), "SOON?", fill=(255, 255, 255), font=self.font, align="center")
         self._refresh_image()
 
-    # def _draw_draft_complete(self):
-    #     off_pos = center_text(self.font.getsize('KICKOFF IN')[0], 32)
-    #     szn_pos = center_text(self.font.getsize(self.data.start_dt)[0], 32)
-    #     self.draw.multiline_text((off_pos,3), 'KICKOFF IN', fill=(255, 255, 255), font=self.font, align="center")
-    #     self.draw.multiline_text((szn_pos, self.font.getsize(self.data.start_dt)[1]+4), self.data.start_dt, fill=(255, 255, 255), font=self.font, align="center")
-    #     self._refresh_image()
+    def _draw_draft_complete(self):
+        off_pos = center_text(self.font.getsize('KICKOFF IN')[0], 32)
+        szn_pos = center_text(self.font.getsize(self.data.start_dt)[0], 32)
+        self.draw.multiline_text((off_pos,3), 'KICKOFF IN', fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize(self.data.start_dt)[1]+4), self.data.start_dt, fill=(255, 255, 255), font=self.font, align="center")
+        self._refresh_image()
 
     def _refresh_image(self):
         self.canvas.SetImage(self.image, 0, 0)

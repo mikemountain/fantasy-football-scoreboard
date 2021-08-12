@@ -111,27 +111,28 @@ def get_teams(league_id):
         print("something somehow ended up out of index")
         return 0
 
-def get_draft(league_id):
-    """
-        get draft infoooo0o0o0o0o
-    """
-    debug.info('getting draft')
-    url = '{0}{1}/drafts'.format(API_URL, league_id)
-    try:
-        get_player_list()
-        drafts = requests.get(url)
-        drafts = drafts.json()
-        # this should obv be variable but it'll change once per year so
-        draft = [d for d in drafts if d['season'] == '2020']
-        return draft[0]
-    except requests.exceptions.RequestException as e:
-        print("Error encountered, Can't reach Sleeper API", e)
-        return matchup_info
-    except IndexError:
-        print("uh oh?")
-        return matchup_info
-    except Exception as e:
-        print("something bad?", e) 
+# def get_draft(league_id):
+#     """
+#         get draft infoooo0o0o0o0o
+#     """
+#     debug.info('getting draft')
+#     url = '{0}{1}/drafts'.format(API_URL, league_id)
+#     try:
+#         get_player_list()
+#         drafts = requests.get(url)
+#         drafts = drafts.json()
+#         # this should obv be variable but it'll change once per year so
+#         # wow this broke for everyone, I should be super ashamed, sorry everyone
+#         draft = [d for d in drafts if d['season'] == '2021']
+#         return draft[0]
+#     except requests.exceptions.RequestException as e:
+#         print("Error encountered, Can't reach Sleeper API", e)
+#         return drafts
+#     except IndexError:
+#         print("uh oh?")
+#         return drafts
+#     except Exception as e:
+#         print("something bad?", e)
 
 def get_roster_id(teams, user_id):
     user = next((item for item in teams if item['id'] == user_id))

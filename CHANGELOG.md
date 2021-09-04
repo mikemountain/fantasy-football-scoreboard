@@ -7,6 +7,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres as best as I can bother to try 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+NEED TO INSTALL YFPY
+
+## [0.1.0] - 2021-09-104
+
+### Added
+- holy shit, Yahoo works
+- config example
+
+### Changed
+- had to change around the sleeper api file to make it flex with yahoo
+- the config stuff
+- updated README to include the Yahoo stuff, as well as a way to contact me without making an issue (if needed)
+
+### Removed
+- my own config which I never should have committed tbh
+- some of the drafting stuff, I never got it to work and there were higher priorities
+
+### Fixed
+
 ## [0.0.5] - 2020-10-11
 
 ### Added

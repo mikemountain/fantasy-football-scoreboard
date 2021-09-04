@@ -15,8 +15,12 @@ class YahooFantasyInfo():
         self.week = week
         self.auth_info = {"consumer_key": yahoo_consumer_key, "consumer_secret": yahoo_consumer_secret}
 
+        authpath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'auth'))
+        if not os.path.exists(authpath):
+            os.makedirs(authpath, 0777)
+
         # load or create OAuth2 refresh token
-        token_file_path = os.path.join("/home/michael/fantasy-football-scoreboard/auth", "token.json")
+        token_file_path = os.path.join(authpath, "token.json")
         if os.path.isfile(token_file_path):
             with open(token_file_path) as yahoo_oauth_token:
                 auth_info = json.load(yahoo_oauth_token)
@@ -76,7 +80,6 @@ class YahooFantasyInfo():
             debug.info('downloading avatar for {0}'.format(teams['user_name']))
             r = requests.get(teams['user_av'], stream=True)
             with open(filename, 'wb') as fd:
-                print(filename)
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)
         filename = os.path.join(logospath, '{0}.jpg'.format(teams['opp_name']))
@@ -84,7 +87,6 @@ class YahooFantasyInfo():
             debug.info('downloading avatar for {0}'.format(teams['opp_name']))
             r = requests.get(teams['opp_av'], stream=True)
             with open(filename, 'wb') as fd:
-                print(filename)
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)
 

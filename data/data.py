@@ -3,6 +3,7 @@ import math
 import sleeper_api_parser as sleeper
 import yahoo_api_parser as yahoo
 import debug
+import requests
 
 # can get week from here http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard (leagues -> week -> number)
 
@@ -10,6 +11,10 @@ class Data:
     def __init__(self, config):
         # Save the parsed config
         self.config = config
+
+        # Get what week it is
+        self.week = self.get_week()
+        # self.week = 1
 
         # which platform are we using
         self.platform = self.config.platform
@@ -19,10 +24,6 @@ class Data:
         self.needs_refresh = True
         self.check_scores = True
 
-        # Get what week it is
-        # self.week = self.get_week()
-        self.week = 1
-
         self.refresh_start()
         # Fetch the teams info
         # self.teams_info = sleeper.get_teams(self.config.league_id)
@@ -30,52 +31,57 @@ class Data:
         # self.my_players = self.get_players()
         # self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
         self.matchup = self.api.matchup
-        print(self.matchup)
+        # print(self.matchup)
 
     def choose_api(self):
         if self.platform == "sleeper":
-            return sleeper.Sleeper(self.config.sleeper.league_id, self.config.sleeper.user_id, self.week)
+            return sleeper.SleeperFantasyInfo(self.config.sleeper_league_id, self.config.sleeper_user_id, self.week)
         elif self.platform == "yahoo":
-            return yahoo.YahooFantasyInfo(self.config.yahoo.yahoo_consumer_key, self.config.yahoo.yahoo_consumer_secret, self.config.yahoo.game_id, self.config.yahoo.league_id, self.week)
+            return yahoo.YahooFantasyInfo(self.config.yahoo_consumer_key, self.config.yahoo_consumer_secret, self.config.yahoo_game_id, self.config.yahoo_league_id, self.week)
 
-    def get_week(self):
+    def get_week(self):   
+        week_info = requests.get('http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
         today = datetime.today()
-        days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days
-        week = int(math.floor((days_since_start / 7) + 1))
-        return week
+        if today < datetime.strptime(week_info['leagues'][0]['calendar'][0]['endDate'], "%Y-%m-%dT%H:%MZ"):
+            print(today < datetime.strptime(week_info['leagues'][0]['calendar'][0]['endDate'], "%Y-%m-%dT%H:%MZ"))
+            return 0
+        else:
+            return week_info['week']['number']
+        # days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days
+        # week = int(math.floor((days_since_start / 7) + 1))
+        # return week
 
     def get_current_date(self):
         # pretty dumb function but I use this to test in off season
         return datetime.utcnow()
 
     def refresh_matchup(self):
-        self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
-        self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        self.matchup = self.api.refresh_matchup()
         self.needs_refresh = False
 
     # this looks rough
     def refresh_scores(self):
-        self.matchup = sleeper.get_matchup_points(self.matchup, self.league_id)
+        self.matchup = self.api.refresh_scores()
         self.needs_refresh = False
 
     def refresh_rosters(self):
-        self.teams_info = sleeper.get_teams(self.config.league_id)
+        self.teams_info = self.api.get_teams(self.config.league_id)
 
     def get_players(self):
         user = next((item for item in self.teams_info if item['id'] == self.user_id))
         return user['players']
 
-    def refresh_draft(self):
-        self.draft = sleeper.get_draft(self.league_id)
-        self.draft_status = self.draft['status']
-        self.draft_start = self.draft['start_time']
-        self.draft_sleep = 43200
-        if self.draft_start:
-            draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
-            self.draft_dt = self.set_dt(draft_delta)
-        else:
-            self.draft_dt = 'NOT SET'
-        self.draft_needs_refresh = False
+    # def refresh_draft(self):
+    #     self.draft = sleeper.get_draft(self.league_id)
+    #     self.draft_status = self.draft['status']
+    #     self.draft_start = self.draft['start_time']
+    #     self.draft_sleep = 43200
+    #     if self.draft_start:
+    #         draft_delta = datetime.fromtimestamp(self.draft_start/1000.0) - datetime.now()
+    #         self.draft_dt = self.set_dt(draft_delta)
+    #     else:
+    #         self.draft_dt = 'NOT SET'
+    #     self.draft_needs_refresh = False
 
     def refresh_start(self):
         self.sleep = 43200

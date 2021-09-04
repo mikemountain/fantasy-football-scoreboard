@@ -17,6 +17,13 @@ class SleeperFantasyInfo():
         self.roster_id = self.get_roster_id(self.teams_info, self.user_id)
         self.matchup = self.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
 
+    def refresh_matchup(self):
+        self.matchup = self.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
+        return self.get_matchup_points(self.matchup, self.league_id)
+
+    def refresh_scores(self):
+        return self.get_matchup_points(self.matchup, self.league_id)
+
     def get_matchup(self, team_roster_id, league_id, week, teams):
         """
             get all matchups this week and find the matchup you care about
@@ -63,8 +70,8 @@ class SleeperFantasyInfo():
             opp_url = 'https://sleeper.app/roster/{0}/{1}'.format(league_id, matchup['opp_roster_id'])
             user_info = requests.get(user_url)
             opp_info = requests.get(opp_url)
-            matchup['user_score'] = parse_score(user_info)
-            matchup['opp_score'] = parse_score(opp_info)
+            matchup['user_score'] = self.parse_score(user_info)
+            matchup['opp_score'] = self.parse_score(opp_info)
             return matchup
         except requests.exceptions.RequestException as e:
             print("Error encountered, Can't reach Sleeper API", e)
@@ -96,7 +103,7 @@ class SleeperFantasyInfo():
         try:
             users = requests.get(users_url)
             users = users.json()
-            get_avatars(users)
+            self.get_avatars(users)
             for user in users:
                 name = user['display_name']
                 avatar = user['avatar']
@@ -153,7 +160,7 @@ class SleeperFantasyInfo():
             os.makedirs(logospath, 0777)
         for team in teams:
             avatar = team['avatar']
-            filename = os.path.join(logospath, '{0}.png'.format(avatar))
+            filename = os.path.join(logospath, '{0}.png'.format(team['display_name']))
             if not os.path.exists(filename):
                 debug.info('downloading avatar for {0}'.format(team['display_name']))
                 av_url = 'https://sleepercdn.com/avatars/thumbs/{0}'.format(avatar)

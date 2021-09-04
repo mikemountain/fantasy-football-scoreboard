@@ -1,0 +1,18 @@
+{
+    "platform": "sleeper",
+    "espn":{
+        "swid": "",
+        "s2": ""
+    },
+    "sleeper": {
+        "league_id": "",
+        "user_id": ""
+    },
+    "yahoo":{
+        "consumer_key": "",
+        "consumer_secret": "",
+        "league_id": "",
+        "game_code": "406"
+    },
+    "debug": false
+}

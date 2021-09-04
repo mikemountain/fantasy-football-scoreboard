@@ -5,8 +5,8 @@ from utils import args, led_matrix_options
 from data.data import Data
 import debug
 
-SCRIPT_NAME = "Sleeper FF Scoreboard"
-SCRIPT_VERSION = "0.0.5"
+SCRIPT_NAME = "Fantasy Football Scoreboard"
+SCRIPT_VERSION = "0.1.0"
 
 # Get supplied command line arguments
 args = args()

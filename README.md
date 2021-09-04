@@ -108,11 +108,17 @@ sudo python main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --le
 ```
 
 ## Usage
-Open the config.json file from the root folder and change these values:
+Copy the config.json.example file from the root folder, save it as config.json and set the values you need:
 
+* ```platform``` - this can only currently be set to sleeper or yahoo. ESPN is coming soon! If you put ESPN (or anything else, really) here the board will fail because I forgot to put error checking in and only noticed now. Oops!
+* ```swid``` - this is for ESPN and won't do anything yet
+* ```s2``` - this is for ESPN and won't do anything yet
 * ```league_id``` - this value can be found in the Sleeper URL: ```https://sleeper.app/leagues/<league_id>/team```
 * ```user_id``` - Run the following command, value will be listed in the output. Use the username that you use to login to Sleeper: ```curl "https://api.sleeper.app/v1/user/<username>"```
-* ```opening_day``` - there will probably be a better way to get this info but meh, you have to change it once a year. Set it year, month, date format with dashes: 2019-09-05. Make sure it's the Thursday, the NFL Kickoff Game, the date the first game is on!
+* ```consumer_key``` - This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above
+* ```consumer_secret``` - This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above
+* ```league_id``` - You should be able to find this info for your Yahoo league somewhere in the main page, possibly? A buddy sent me all his info so I actually don't know for certain. But if he found it, you should be able to.
+* ```game_code``` - Don't change this! It corresponds to "NFL" for some reason in the Yahoo API. It changes yearly. This needs to be automated but I have forgotten how I figured this info out because I've been working on this stuff for _way_ too long recently.
 
 Now, in a terminal, cd to the fantasy-football-scoreboard folder and run this command. 
 ```

@@ -1,7 +1,10 @@
 # fantasy-football-scoreboard
 ![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
-Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform.
+Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and EITHER the Sleeper OR YAHOO fantasy platforms! We have Yahoo!!!
+
+### NFL LED Scoreboard
+Hey, I also made an [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), which you really should go check out and star. Because, let's face it, you're gonna hate seeing your fantasy team after a while.
 
 ### Credit and inpsiration
 This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), who based THEIR project off of the [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard). Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
@@ -9,19 +12,27 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 ### Donate
 <a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>
 
-If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
+If you enjoyed this project, my NFL project, or if you're just feeling generous, consider buying me a beer. Cheers! :beers: 
+You can also PM me on reddit under /u/mikemountain if you need help but don't think it requires an issue!
 
-## Features (v0.0.5)
+## Features (v0.1.0)
+
+### YAHOO SETUP STUFF
+Okay, so Yahoo is gonna be a bit funky. 
+1) First, go to https://developer.yahoo.com/ then 'My Apps' and then 'YDN Apps'.
+2) On the lefthand panel, click 'Create an App'.
+3) Name the app something like "Fantasy Football Scoreboard" in the 'Application Name' block.
+4) In the Redirect URL section, just enter https://localhost:8080.
+5) Under the 'API Permissions' sections select 'Fantasy Sports' and then make sure that 'Read' is selected.
+6) Click create app.
+Woo, you've technically created a Yahoo App and you will see two important pieces of information: the Client ID (Consumer Key), and Client Secret(Consumer Secret), which will look like long strings of random letters and numbers.
+You will need to enter these two pieces of information into the config, along with your League ID. 
+When you run this for the first time, you're going to get some Yahoo stuff happening - a browser window will pop up (if possible), and a link to that browser window will also appear in the console. It'll look similar to something like `https://api.login.yahoo.com/oauth2/request_auth?client_id=CLIENTIDHERE&redirect_uri=oob&language=en-us&response_type=code` and this is normal. If you don't get the browser window popping up, copy and paste this URL into a browser window, and log into Yahoo to authorise the scoreboard. Once you log in, you'll be given a code, which you'll need to type into the console. This is just to authorise the app, and a `token.json` file will be generated into an `./auth` directory so that this doesn't happen every time.
+
+I _think_ this should be all the info people need - feel free to reach out if you need more help!
 
 ### Updating!
 Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.
-
-### Drafting
-If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 
-
-Still working on getting something done for during the draft, that will be one of the next things to be worked on. 
-
-Post draft, for now you'll just be shown a countdown 'til kickoff. Hoping to add more to it soon but we'll see what can be done. ![kickoff when](imgs/kickoff.jpg)
 
 ### Pregame
 Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.
@@ -42,7 +53,7 @@ It displays a message that it's the off season. ![man it's offseason, take a bre
 ## Roadmap
 
 Future plans include:
-* using different platforms (Yahoo first and then ESPN most likely (if at all possible))
+* using different platforms (ESPN is next)
 * cycle through league scores on off-game times during the week (Post game could cycle through each matchup's result)
 * finding a better way to set the opening day than a config option (but it's only set once a year so this is pretty low prio)
 * different animations for good plays vs bad plays (nobody wants to see "BIG PLAY" and then see it's your opponent getting the points)

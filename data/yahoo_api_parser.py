@@ -16,7 +16,7 @@ class YahooFantasyInfo():
         self.auth_info = {"consumer_key": yahoo_consumer_key, "consumer_secret": yahoo_consumer_secret}
 
         # load or create OAuth2 refresh token
-        token_file_path = os.path.join("../auth", "token.json")
+        token_file_path = os.path.join("/home/michael/fantasy-football-scoreboard/auth", "token.json")
         if os.path.isfile(token_file_path):
             with open(token_file_path) as yahoo_oauth_token:
                 auth_info = json.load(yahoo_oauth_token)
@@ -34,6 +34,14 @@ class YahooFantasyInfo():
             self.oauth.refresh_access_token()
 
         self.matchup = self.get_matchup(self.game_id, self.league_id, week)
+        self.get_avatars(self.matchup)
+
+    # yeah these two are stupid and useless functions but right now I'm panicking trying to get this to work
+    def refresh_matchup(self):
+        return self.get_matchup(self.game_id, self.league_id, self.week)
+
+    def refresh_scores(self):
+        return self.get_matchup(self.game_id, self.league_id, self.week)
     
     def get_matchup(self, game_id, league_id, week):
         self.refresh_access_token()
@@ -48,13 +56,14 @@ class YahooFantasyInfo():
                     matchup_info['user_av'] = matchup[team]['team'][0][19]['managers'][0]['manager']['image_url']
                     matchup_info['user_team'] = matchup[team]['team'][0][2]['name']
                     matchup_info['user_proj'] = matchup[team]['team'][1]['team_projected_points']['total']
-                    matchup_info['user_score'] = matchup[team]['team'][1]['team_points']['total']
+                    matchup_info['user_score'] = float(matchup[team]['team'][1]['team_points']['total'])
                 else:
                     matchup_info['opp_name'] = matchup[team]['team'][0][19]['managers'][0]['manager']['nickname']
                     matchup_info['opp_av'] = matchup[team]['team'][0][19]['managers'][0]['manager']['image_url']
                     matchup_info['opp_team'] = matchup[team]['team'][0][2]['name']
                     matchup_info['opp_proj'] = matchup[team]['team'][1]['team_projected_points']['total']
-                    matchup_info['opp_score'] = matchup
+                    matchup_info['opp_score'] = float(matchup[team]['team'][1]['team_points']['total'])
+        return matchup_info
 
     def get_avatars(self, teams):
         self.refresh_access_token()
@@ -62,7 +71,7 @@ class YahooFantasyInfo():
         logospath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'logos'))
         if not os.path.exists(logospath):
             os.makedirs(logospath, 0777)
-        filename = os.path.join(logospath, '{0}.png'.format(teams['user_name']))
+        filename = os.path.join(logospath, '{0}.jpg'.format(teams['user_name']))
         if not os.path.exists(filename):
             debug.info('downloading avatar for {0}'.format(teams['user_name']))
             r = requests.get(teams['user_av'], stream=True)
@@ -70,7 +79,7 @@ class YahooFantasyInfo():
                 print(filename)
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)
-        filename = os.path.join(logospath, '{0}.png'.format(teams['opp_name']))
+        filename = os.path.join(logospath, '{0}.jpg'.format(teams['opp_name']))
         if not os.path.exists(filename):
             debug.info('downloading avatar for {0}'.format(teams['opp_name']))
             r = requests.get(teams['opp_av'], stream=True)

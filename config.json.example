@@ -1,8 +1,10 @@
 {
     "platform": "sleeper",
     "espn":{
+        "league_id": "",
+        "team_id": "",
         "swid": "",
-        "s2": ""
+        "espn_s2": ""
     },
     "sleeper": {
         "league_id": "",
@@ -14,5 +16,6 @@
         "league_id": "",
         "game_code": "406"
     },
+    "year": "2021",
     "debug": false
 }

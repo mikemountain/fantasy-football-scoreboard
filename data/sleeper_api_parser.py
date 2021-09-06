@@ -42,13 +42,13 @@ class SleeperFantasyInfo():
                         matchup_id = matchup['matchup_id']
                         matchup_info['matchup_id'] = matchup['matchup_id']
                         matchup_info['user_roster_id'] = team_roster_id
-                        matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['avatar']
+                        matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
                         matchup_info['user_name'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
                         matchup_info['user_team'] = next((item for item in teams if item['roster_id'] == team_roster_id))['team']
                 for matchup in matchups:
                     if matchup['matchup_id'] == matchup_id and matchup['roster_id'] != team_roster_id:
                         matchup_info['opp_roster_id'] = matchup['roster_id']
-                        matchup_info['opp_av'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['avatar']
+                        matchup_info['opp_av'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['name']
                         matchup_info['opp_name'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['name']
                         matchup_info['opp_team'] = next((item for item in teams if item['roster_id'] == matchup['roster_id']))['team']
             return matchup_info

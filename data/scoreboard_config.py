@@ -7,9 +7,10 @@ class ScoreboardConfig:
     def __init__(self, filename_base, args):
         json = self.__get_config(filename_base)
         # Misc config options
-        self.opening_day = json["opening_day"]
+        # self.opening_day = json["opening_day"]
         self.debug = json["debug"]
         self.platform = json["platform"]
+        self.year = json["year"]
 
         self.sleeper_league_id = json["sleeper"]["league_id"]
         self.sleeper_user_id = json["sleeper"]["user_id"]

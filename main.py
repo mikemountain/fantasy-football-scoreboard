@@ -6,7 +6,7 @@ from data.data import Data
 import debug
 
 SCRIPT_NAME = "Fantasy Football Scoreboard"
-SCRIPT_VERSION = "0.1.0"
+SCRIPT_VERSION = "1.0.0"
 
 # Get supplied command line arguments
 args = args()

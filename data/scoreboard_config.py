@@ -18,6 +18,11 @@ class ScoreboardConfig:
         self.yahoo_consumer_secret = json["yahoo"]["consumer_secret"]
         self.yahoo_game_id = json["yahoo"]["game_id"]
         self.yahoo_league_id = json["yahoo"]["league_id"]
+
+        self.espn_s2 = json["espn"]["espn_s2"]
+        self.espn_swid = json["espn"]["swid"]
+        self.espn_team_id = json["espn"]["team_id"]
+        self.espn_league_id = json["espn"]["league_id"]
         # self.user_id = json["user_id"]
         # self.league_id = json["league_id"]
         # config options from arguments. If the argument was passed, use it, else use the one from config file.

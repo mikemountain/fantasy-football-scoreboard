@@ -10,7 +10,7 @@ API_URL = "https://fantasy.espn.com/apis/v3/games/ffl/seasons"
 class ESPNFantasyInfo():
     def __init__(self, league_id, team_id, swid, espn_s2, week, year):
         self.league_id = league_id
-        self.team_id = team_id
+        self.team_id = int(team_id)
         self.week = week
         self.year = year
         self.cookies = {'swid': swid, 'espn_s2': espn_s2}
@@ -28,32 +28,33 @@ class ESPNFantasyInfo():
         """
             get all matchups this week and find the matchup you care about
         """
-        # this is for pre-game of week 1
-        if week == 0:
-            week = 1
         url = '{0}/{1}/segments/0/leagues/{2}'.format(API_URL, self.year, self.league_id)
         matchup_id = 0
         matchup_info = {}
+        if self.week == 0:
+            self.week = 1
         try:
-            matchups = requests.get(url, cookies = self.cookies, params = {"view": "mTeam"}))
+            matchups = requests.get(url, cookies = self.cookies, params = {"view": "mBoxscore"})
             matchups = matchups.json()
             for matchup in matchups['schedule']:
-                if matchup['home']['teamId'] == self.team_id:
-                    matchup_info['user_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['team_name']
-                    matchup_info['user_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
+                if int(matchup['matchupPeriodId']) != self.week:
+                    continue
+                if int(matchup['home']['teamId']) == self.team_id:
+                    matchup_info['user_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['team']
+                    matchup_info['user_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['user_team'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
                     matchup_info['user_score'] = float(matchup['home']['totalPoints'])
-                    matchup_info['opp_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team_name']
-                    matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
+                    matchup_info['opp_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team']
+                    matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['opp_team'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
                     matchup_info['opp_score'] = float(matchup['away']['totalPoints'])
-                elif matchup['away']['teamId'] == team_id:
-                    matchup_info['user_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team_name']
-                    matchup_info['user_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
+                elif int(matchup['away']['teamId']) == self.team_id:
+                    matchup_info['user_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team']
+                    matchup_info['user_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['user_team'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
                     matchup_info['user_score'] = float(matchup['away']['totalPoints'])
-                    matchup_info['opp_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['team_name']
-                    matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
+                    matchup_info['opp_name'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['team']
+                    matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['opp_team'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
                     matchup_info['opp_score'] = float(matchup['home']['totalPoints'])
             return matchup_info
@@ -77,14 +78,14 @@ class ESPNFantasyInfo():
                 avatar = user['logo']
                 team_id = user['id']
                 abbrev = user['abbrev']
-                team_name = user['location'] + user['nickname']
+                team_name = user['location'] + ' ' + user['nickname']
                 owner = user['primaryOwner']
-                user_dict = {"abbrev": abbrev, "team_id": team_id, "owners": owners, "team": team_name, "avatar": avatar}
+                user_dict = {"abbrev": abbrev, "team_id": team_id, "owner": owner, "team": team_name, "avatar": avatar}
                 user_info.append(user_dict)
             for member in users['members']:
                 for ui in user_info:
-                    if user['owners'][0] == member['id']:
-                        user['display_name'] = member['displayName']
+                    if ui['owner'] == member['id']:
+                        ui['display_name'] = member['displayName']
                         break
             self.get_avatars(user_info)
             return user_info
@@ -102,7 +103,7 @@ class ESPNFantasyInfo():
             os.makedirs(logospath, 0777)
         for team in teams:
             avatar = team['avatar']
-            filename = os.path.join(logospath, '{0}.png'.format(team['owner']))
+            filename = os.path.join(logospath, '{0}'.format(avatar.split("/")[-1]))
             if not os.path.exists(filename):
                 debug.info('downloading avatar for {0}'.format(team['display_name']))
                 r = requests.get(avatar, stream=True)
@@ -110,3 +111,6 @@ class ESPNFantasyInfo():
                     print(filename)
                     for chunk in r.iter_content(chunk_size=128):
                         fd.write(chunk)
+                # can't render SVGs
+                if filename.endswith('.svg'):
+                    debug.warning('Warning! There are multiple SVG files that need to be converted manually into PNG due to crappy pi/python2 limitations. Check the ESPN SETUP STUFF part of the readme!')

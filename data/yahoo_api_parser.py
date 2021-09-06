@@ -57,13 +57,15 @@ class YahooFantasyInfo():
             if not isinstance(matchup[team], int):
                 if matchup[team]['team'][0][3]:
                     matchup_info['user_name'] = matchup[team]['team'][0][19]['managers'][0]['manager']['nickname']
-                    matchup_info['user_av'] = matchup[team]['team'][0][19]['managers'][0]['manager']['image_url']
+                    matchup_info['user_av'] = matchup[team]['team'][0][19]['managers'][0]['manager']['nickname']
+                    matchup_info['user_av_location'] = matchup[team]['team'][0][19]['managers'][0]['manager']['image_url']
                     matchup_info['user_team'] = matchup[team]['team'][0][2]['name']
                     matchup_info['user_proj'] = matchup[team]['team'][1]['team_projected_points']['total']
                     matchup_info['user_score'] = float(matchup[team]['team'][1]['team_points']['total'])
                 else:
                     matchup_info['opp_name'] = matchup[team]['team'][0][19]['managers'][0]['manager']['nickname']
-                    matchup_info['opp_av'] = matchup[team]['team'][0][19]['managers'][0]['manager']['image_url']
+                    matchup_info['opp_av'] = matchup[team]['team'][0][19]['managers'][0]['manager']['nickname']
+                    matchup_info['opp_av_location'] = matchup[team]['team'][0][19]['managers'][0]['manager']['image_url']
                     matchup_info['opp_team'] = matchup[team]['team'][0][2]['name']
                     matchup_info['opp_proj'] = matchup[team]['team'][1]['team_projected_points']['total']
                     matchup_info['opp_score'] = float(matchup[team]['team'][1]['team_points']['total'])
@@ -78,14 +80,14 @@ class YahooFantasyInfo():
         filename = os.path.join(logospath, '{0}.jpg'.format(teams['user_name']))
         if not os.path.exists(filename):
             debug.info('downloading avatar for {0}'.format(teams['user_name']))
-            r = requests.get(teams['user_av'], stream=True)
+            r = requests.get(teams['user_av_location'], stream=True)
             with open(filename, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)
         filename = os.path.join(logospath, '{0}.jpg'.format(teams['opp_name']))
         if not os.path.exists(filename):
             debug.info('downloading avatar for {0}'.format(teams['opp_name']))
-            r = requests.get(teams['opp_av'], stream=True)
+            r = requests.get(teams['opp_av_location'], stream=True)
             with open(filename, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)

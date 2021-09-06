@@ -25,7 +25,7 @@ class Data:
         self.needs_refresh = True
         self.check_scores = True
 
-        self.refresh_start()
+        # self.refresh_start()
         # Fetch the teams info
         # self.teams_info = sleeper.get_teams(self.config.league_id)
         # self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)

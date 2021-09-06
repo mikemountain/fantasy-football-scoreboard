@@ -99,8 +99,8 @@ class MainRenderer:
         # don't you love how messy this is? boy
         if self.data.matchup:
             matchup = self.data.matchup
-            opp_av = matchup['opp_name']
-            user_av = matchup['user_name']
+            opp_av = matchup['opp_av']
+            user_av = matchup['user_av']
             if opp_av is None:
                 opp_av = 'noneLogo.png'
             if user_av is None:
@@ -126,12 +126,15 @@ class MainRenderer:
             if len(user_name) > 12 or len(opp_name) > 12:
                 if self.data.platform == "yahoo":
                     # Open the logo image file
-                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((23, 23), 1)
-                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((23, 23), 1)
+                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((23, 23), Image.BOX)
+                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((23, 23), Image.BOX)
+                elif self.data.platform == "espn":
+                    opp_logo = Image.open('logos/{}'.format(opp_av)).resize((23, 23), Image.BOX)
+                    user_logo = Image.open('logos/{}'.format(user_av)).resize((23, 23), Image.BOX)
                 else:
-                    # try png for sleeper/espn (hopefully)
-                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((23, 23), 1)
-                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((23, 23), 1)
+                    # try png for sleeper
+                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((23, 23), Image.BOX)
+                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((23, 23), Image.BOX)
                 # Set the position of each logo on screen.
                 opp_team_logo_pos = { "x": 0, "y": 9 }
                 user_team_logo_pos = { "x": 41, "y": 9 }
@@ -141,12 +144,15 @@ class MainRenderer:
                 # Open the logo image file
                 if self.data.platform == "yahoo":
                     # Open the logo image file
-                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), 1)
-                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), 1)
+                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), Image.BOX)
+                elif self.data.platform == "espn":
+                    opp_logo = Image.open('logos/{}'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}'.format(user_av)).resize((19, 19), Image.BOX)
                 else:
-                    # try png for sleeper/espn (hopefully)
-                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
-                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
+                    # try png for sleeper
+                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), Image.BOX)
                 # Set the position of each logo on screen.
                 opp_team_logo_pos = { "x": 0, "y": 13 }
                 user_team_logo_pos = { "x": 45, "y": 7 }
@@ -172,8 +178,8 @@ class MainRenderer:
     def _draw_game(self):
         self.data.refresh_matchup()
         matchup = self.data.matchup
-        opp_av = matchup['opp_name']
-        user_av = matchup['user_name']
+        opp_av = matchup['opp_av']
+        user_av = matchup['user_av']
         if opp_av is None:
             opp_av = 'noneLogo.png'
         if user_av is None:
@@ -264,12 +270,15 @@ class MainRenderer:
                 self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
                 if self.data.platform == "yahoo":
                     # Open the logo image file
-                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), 1)
-                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), 1)
+                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), Image.BOX)
+                elif self.data.platform == "espn":
+                    opp_logo = Image.open('logos/{}'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}'.format(user_av)).resize((19, 19), Image.BOX)
                 else:
                     # try png for sleeper/espn (hopefully)
-                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
-                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
+                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), Image.BOX)
                 # Set the position of each logo on screen.
                 opp_team_logo_pos = { "x": 0, "y": 0 }
                 user_team_logo_pos = { "x": 45, "y": 0 }
@@ -299,8 +308,8 @@ class MainRenderer:
         self.data.refresh_matchup()
         if self.data.matchup != 0:
             matchup = self.data.matchup
-            opp_av = matchup['opp_name']
-            user_av = matchup['user_name']
+            opp_av = matchup['opp_av']
+            user_av = matchup['user_av']
             if opp_av is None:
                 opp_av = 'noneLogo.png'
             if user_av is None:
@@ -360,12 +369,15 @@ class MainRenderer:
             # Open the logo image file
             if self.data.platform == "yahoo":
                 # Open the logo image file
-                opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), 1)
-                user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), 1)
+                opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), Image.BOX)
+                user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), Image.BOX)
+            elif self.data.platform == "espn":
+                opp_logo = Image.open('logos/{}'.format(opp_av)).resize((19, 19), Image.BOX)
+                user_logo = Image.open('logos/{}'.format(user_av)).resize((19, 19), Image.BOX)
             else:
                 # try png for sleeper/espn (hopefully)
-                opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
-                user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
+                opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), Image.BOX)
+                user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), Image.BOX)
             # Set the position of each logo on screen.
             opp_team_logo_pos = { "x": 0, "y": 0 }
             user_team_logo_pos = { "x": 45, "y": 0 }

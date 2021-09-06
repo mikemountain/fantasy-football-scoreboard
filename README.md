@@ -4,7 +4,7 @@
 Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and EITHER the Sleeper OR YAHOO fantasy platforms! We have Yahoo!!!
 
 ### NFL LED Scoreboard
-Hey, I also made an [nfl-led-scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), which you really should go check out and star. Because, let's face it, you're gonna hate seeing your fantasy team after a while.
+Hey, I also made an [NFL LED scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), which you really should go check out and star. Because, let's face it, you're gonna hate seeing your fantasy team after a while.
 
 ### Credit and inpsiration
 This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), who based THEIR project off of the [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard). Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
@@ -15,21 +15,29 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 If you enjoyed this project, my NFL project, or if you're just feeling generous, consider buying me a beer. Cheers! :beers: 
 You can also PM me on reddit under /u/mikemountain if you need help but don't think it requires an issue!
 
-## Features (v0.1.0)
+## Features (v1.0.0)
 
 ### YAHOO SETUP STUFF
 Okay, so Yahoo is gonna be a bit funky. 
-1) First, go to https://developer.yahoo.com/ then 'My Apps' and then 'YDN Apps'.
-2) On the lefthand panel, click 'Create an App'.
-3) Name the app something like "Fantasy Football Scoreboard" in the 'Application Name' block.
-4) In the Redirect URL section, just enter https://localhost:8080.
-5) Under the 'API Permissions' sections select 'Fantasy Sports' and then make sure that 'Read' is selected.
-6) Click create app.
+1. First, go to https://developer.yahoo.com/ then 'My Apps' and then 'YDN Apps'.
+2. On the lefthand panel, click 'Create an App'.
+3. Name the app something like "Fantasy Football Scoreboard" in the 'Application Name' block.
+4. In the Redirect URL section, just enter https://localhost:8080.
+5. Under the 'API Permissions' sections select 'Fantasy Sports' and then make sure that 'Read' is selected.
+6. Click create app.
 Woo, you've technically created a Yahoo App and you will see two important pieces of information: the Client ID (Consumer Key), and Client Secret(Consumer Secret), which will look like long strings of random letters and numbers.
 You will need to enter these two pieces of information into the config, along with your League ID. 
 When you run this for the first time, you're going to get some Yahoo stuff happening - a browser window will pop up (if possible), and a link to that browser window will also appear in the console. It'll look similar to something like `https://api.login.yahoo.com/oauth2/request_auth?client_id=CLIENTIDHERE&redirect_uri=oob&language=en-us&response_type=code` and this is normal. If you don't get the browser window popping up, copy and paste this URL into a browser window, and log into Yahoo to authorise the scoreboard. Once you log in, you'll be given a code, which you'll need to type into the console. This is just to authorise the app, and a `token.json` file will be generated into an `./auth` directory so that this doesn't happen every time.
 
 I _think_ this should be all the info people need - feel free to reach out if you need more help!
+
+### ESPN SETUP STUFF
+You'll need a few pieces of info for ESPN to work - namely some cookies, your league ID and your team ID. You can get your league ID and team ID by just simply looking at the url when you click your team homepage/roster page. In Chrome, you can go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, and put the "content" of the SWID and the ESPN_S2 cookies in the config, INCLUDING THE {CURLY BRACES} of the SWID.
+Note!!! ESPN allows SVGs as team images. There's no easy way for the project to display SVGs, or even convert them to PNGs, so the actual best solution is this:
+1. Run the project. If there are SVGs it will download the files, then alert you, and then fail to run properly.
+2. Run `sudo apt-get update && apt-get install inkscape`
+3. Run `cd logos; find -name "*.svg" -exec sh -c 'sudo inkscape $1 --export-png=${1%.svg}.png' _ {} \;`
+If you see `Bitmap saved as:` lines, you should be able to `cd ..` back into the project and then run it again, and it should work. I apologise that it's a bit annoying but it's the way she goes (for now).
 
 ### Updating!
 Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.

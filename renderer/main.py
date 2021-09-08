@@ -36,11 +36,11 @@ class MainRenderer:
                 debug.info('render draft info')
                 debug.info(self.data.user_id)
                 self.__render_draft()
-            # weeks 1-16, in season
-            elif self.week >= 0 and self.week < 17:
+            # weeks 1-17, in season
+            elif self.week >= 0 and self.week < 18:
                 debug.info('render game')
                 self.__render_game()
-            # weeks 17+, off season
+            # weeks 18+, off season
             else:
                 debug.info('Off season state')
                 self.__render_off_season()

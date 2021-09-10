@@ -50,7 +50,7 @@ Starting at ~8pm Eastern Thursday, the score will be updated every 20s during ga
 
 Here's a gif that shows you what this would look like (excuse the shaky hands please, I was updating my testing REST API with one hand and filming with the other). ![score gif](imgs/big_play_and_updates.gif)
 
-I plan to set this so that it only does these checks during actual game times, because there's no real point in checking for game updates on non-game days or during non-game times on gamedays. Eventually, I'd like to only check for score updates if there's a player in the matchup who's playing (v1.0.0 release).
+I plan to set this so that it only does these checks during actual game times, because there's no real point in checking for game updates on non-game days or during non-game times on gamedays. Eventually, I'd like to only check for score updates if there's a player in the matchup who's playing.
 
 ### Postgame
 The board will stay in a post-game state until the next week, and will easily disappoint you with a quick glance. Loser is red, winner is green, with LOSS or WIN in between for that extra oomph. ![post game recap](imgs/accurate_postgame.jpg)
@@ -61,9 +61,7 @@ It displays a message that it's the off season. ![man it's offseason, take a bre
 ## Roadmap
 
 Future plans include:
-* using different platforms (ESPN is next)
 * cycle through league scores on off-game times during the week (Post game could cycle through each matchup's result)
-* finding a better way to set the opening day than a config option (but it's only set once a year so this is pretty low prio)
 * different animations for good plays vs bad plays (nobody wants to see "BIG PLAY" and then see it's your opponent getting the points)
 * cycle through multiple teams in multiple leagues so you don't just have to pick your favourite team (although we all have one best league)
 * maybe some fun stuff for the draft like who just drafted whom and a countdown clock or something I don't know but it'll be flashy (can't do this yet with current sleeper api)

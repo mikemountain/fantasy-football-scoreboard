@@ -35,6 +35,7 @@ class Data:
         # print(self.matchup)
 
     def choose_api(self):
+        debug.info(self.platform.lower())
         if self.platform.lower() == "sleeper":
             return sleeper.SleeperFantasyInfo(self.config.sleeper_league_id, self.config.sleeper_user_id, self.week)
         elif self.platform.lower() == "yahoo":

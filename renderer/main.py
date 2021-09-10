@@ -48,12 +48,14 @@ class MainRenderer:
     def __render_game(self):
         # check if thursday and before 7pm est -> figure this out in utc
         time = self.data.get_current_date()
+        # print(time)
+        # print("week", self.week, "weekday", time.weekday(), "hour", time.hour)
         if self.week == 0 or (time.weekday() == 3 and time.hour >= 13):
             debug.info('Scheduled State, waiting 15 min')
             self._draw_pregame()
             t.sleep(900)
         # thursday before 8pm est
-        elif time.weekday() == 4 and 0 <= time.hour <= 1 and time.minute <= 15:
+        elif time.weekday() == 4 and time.hour == 0 and time.minute <= 15:
             debug.info('Pre-Game State, waiting 1 minute')
             self._draw_pregame()
             t.sleep(60)
@@ -207,22 +209,23 @@ class MainRenderer:
                 matchup = self.data.matchup
                 game_date = 'WEEK {}'.format(self.data.week)
                 # small increase in score
-                if matchup['user_score'] > user_score:
-                    user_colour = (165, 200, 50)
-                if matchup['opp_score'] > opp_score:
-                    opp_colour = (165, 200, 50)
-                # decrease in score
-                if matchup['user_score'] < user_score:
-                    user_colour = (175, 25, 25)
-                if matchup['opp_score'] < opp_score:
-                    opp_colour = (175, 25, 25)
-                # big play! 5+ points for someone, turn it gold
-                if matchup.get('user_score', 0) > (user_score + 5) or matchup.get('opp_score', 0) > (opp_score + 5):
-                    self._draw_big_play()
-                if matchup['user_score'] > user_score + 5:
-                    user_colour = (255, 215, 0)
-                if matchup['opp_score'] > opp_score + 5:
-                    opp_colour = (255, 215, 0)
+                if not self.data.platform == "sleeper":
+                    if matchup['user_score'] > user_score:
+                        user_colour = (165, 200, 50)
+                    if matchup['opp_score'] > opp_score:
+                        opp_colour = (165, 200, 50)
+                    # decrease in score
+                    if matchup['user_score'] < user_score:
+                        user_colour = (175, 25, 25)
+                    if matchup['opp_score'] < opp_score:
+                        opp_colour = (175, 25, 25)
+                    # big play! 5+ points for someone, turn it gold
+                    if matchup.get('user_score', 0) > (user_score + 5) or matchup.get('opp_score', 0) > (opp_score + 5):
+                        self._draw_big_play()
+                    if matchup['user_score'] > user_score + 5:
+                        user_colour = (255, 215, 0)
+                    if matchup['opp_score'] > opp_score + 5:
+                        opp_colour = (255, 215, 0)
                 # Using big and small numbers
                 opp_big, opp_small = divmod(matchup['opp_score'], 1)
                 opp_big = int(opp_big)

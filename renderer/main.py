@@ -209,23 +209,22 @@ class MainRenderer:
                 matchup = self.data.matchup
                 game_date = 'WEEK {}'.format(self.data.week)
                 # small increase in score
-                if not self.data.platform == "sleeper":
-                    if matchup['user_score'] > user_score:
-                        user_colour = (165, 200, 50)
-                    if matchup['opp_score'] > opp_score:
-                        opp_colour = (165, 200, 50)
-                    # decrease in score
-                    if matchup['user_score'] < user_score:
-                        user_colour = (175, 25, 25)
-                    if matchup['opp_score'] < opp_score:
-                        opp_colour = (175, 25, 25)
-                    # big play! 5+ points for someone, turn it gold
-                    if matchup.get('user_score', 0) > (user_score + 5) or matchup.get('opp_score', 0) > (opp_score + 5):
-                        self._draw_big_play()
-                    if matchup['user_score'] > user_score + 5:
-                        user_colour = (255, 215, 0)
-                    if matchup['opp_score'] > opp_score + 5:
-                        opp_colour = (255, 215, 0)
+                if matchup['user_score'] > user_score:
+                    user_colour = (165, 200, 50)
+                if matchup['opp_score'] > opp_score:
+                    opp_colour = (165, 200, 50)
+                # decrease in score
+                if matchup['user_score'] < user_score:
+                    user_colour = (175, 25, 25)
+                if matchup['opp_score'] < opp_score:
+                    opp_colour = (175, 25, 25)
+                # big play! 5+ points for someone, turn it gold
+                if matchup.get('user_score', 0) > (user_score + 5) or matchup.get('opp_score', 0) > (opp_score + 5):
+                    self._draw_big_play()
+                if matchup['user_score'] > user_score + 5:
+                    user_colour = (255, 215, 0)
+                if matchup['opp_score'] > opp_score + 5:
+                    opp_colour = (255, 215, 0)
                 # Using big and small numbers
                 opp_big, opp_small = divmod(matchup['opp_score'], 1)
                 opp_big = int(opp_big)

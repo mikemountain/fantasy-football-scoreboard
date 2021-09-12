@@ -19,10 +19,10 @@ class SleeperFantasyInfo():
 
     def refresh_matchup(self):
         self.matchup = self.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
-        return self.get_matchup_points(self.matchup, self.league_id)
+        return self.get_points(self.matchup)
 
     def refresh_scores(self):
-        return self.get_matchup_points(self.matchup, self.league_id)
+        return self.get_points(self.matchup)
 
     def get_matchup(self, team_roster_id, league_id, week, teams):
         """
@@ -39,12 +39,12 @@ class SleeperFantasyInfo():
             matchups = matchups.json()
             for matchup in matchups:
                 if matchup['roster_id'] == team_roster_id:
-                        matchup_id = matchup['matchup_id']
-                        matchup_info['matchup_id'] = matchup['matchup_id']
-                        matchup_info['user_roster_id'] = team_roster_id
-                        matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
-                        matchup_info['user_name'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
-                        matchup_info['user_team'] = next((item for item in teams if item['roster_id'] == team_roster_id))['team']
+                    matchup_id = matchup['matchup_id']
+                    matchup_info['matchup_id'] = matchup['matchup_id']
+                    matchup_info['user_roster_id'] = team_roster_id
+                    matchup_info['user_av'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
+                    matchup_info['user_name'] = next((item for item in teams if item['roster_id'] == team_roster_id))['name']
+                    matchup_info['user_team'] = next((item for item in teams if item['roster_id'] == team_roster_id))['team']
                 for matchup in matchups:
                     if matchup['matchup_id'] == matchup_id and matchup['roster_id'] != team_roster_id:
                         matchup_info['opp_roster_id'] = matchup['roster_id']
@@ -61,39 +61,26 @@ class SleeperFantasyInfo():
         except Exception as e:
             print("something bad?", e)
 
-    def get_matchup_points(self, matchup, league_id):
-        # sleeper unfortunately changed the best way for me to do this
-        # so now this is the work-around until a better solution presents itself
+    def get_points(self, game):
         print('checking scores btw')
         try:
-            user_url = 'https://sleeper.app/roster/{0}/{1}'.format(league_id, matchup['user_roster_id'])
-            opp_url = 'https://sleeper.app/roster/{0}/{1}'.format(league_id, matchup['opp_roster_id'])
-            user_info = requests.get(user_url)
-            opp_info = requests.get(opp_url)
-            matchup['user_score'] = self.parse_score(user_info)
-            matchup['opp_score'] = self.parse_score(opp_info)
-            return matchup
+            matchup_url = 'https://api.sleeper.app/v1/league/{0}/matchups/{1}'.format(self.league_id, self.week)
+            matchups = requests.get(matchup_url)
+            matchups = matchups.json()
+            for matchup in matchups:
+                if matchup['roster_id'] == game['user_roster_id']:
+                    game['user_score'] = matchup['points']
+                if matchup['roster_id'] == game['opp_roster_id']:
+                    game['opp_score'] = matchup['points']
+            return game
         except requests.exceptions.RequestException as e:
             print("Error encountered, Can't reach Sleeper API", e)
-            return matchup_info
+            return game
         except IndexError:
             print("index error ", e)
-            return matchup_info
+            return game
         except Exception as e:
             print("general exception ", e)
-
-    def parse_score(self, user_info):
-        score = 0.0
-        tree = html.fromstring(user_info.content)
-        # oh fuck yeah bud let's duct tape the shit out of this
-        for p in tree.xpath("//div[@class='players']//div[contains(@class, 'real ')]/text()"):
-            try:
-                fp = float(p)
-                score += fp
-            # this catches the '-' scores
-            except:
-                pass
-        return score
 
     def get_teams(self, league_id):
         debug.info('getting teams')

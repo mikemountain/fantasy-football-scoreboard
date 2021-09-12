@@ -300,10 +300,10 @@ class MainRenderer:
                 self.data.needs_refresh = True
                 t.sleep(10 + extra_sleep)
             else:
-                # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
-                self.draw.line((0, 0) + (self.width, 0), fill=128)
+                # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 30s.
+                self.draw.line((0, self.height) + (self.width, self.height), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                t.sleep(10)
+                t.sleep(30)
 
     # I think this is fine?
     def _draw_post_game(self):

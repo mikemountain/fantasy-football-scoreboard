@@ -17,6 +17,16 @@ You can also PM me on reddit under /u/mikemountain if you need help but don't th
 
 ## Features (v1.0.0)
 
+### UPGRADING TO v1.0.0
+There have been some decent changes since v0.0.5. Check the Troubleshooting section if you get any errors running the following steps, but to get to this latest version:
+1. Run the command `git stash`. This will take any "local changes" you made (such as to the config, etc) and "store" them so that you can update the local code
+2. Run the command `git fetch && git checkout master`. This will tell your scoreboard to look for new updates, and then switch to the main code branch.
+3. Run the command `git pull`. This will pull down all the latest changes to your board.
+4. Run the command `cp config.json.example config.json`. This will make a copy of the example config to use as your regular config file.
+5. Run the command `nano config.json` and then edit in the fields you require (steps for Yahoo and ESPN are further below in the README)
+6. After you've set up the config.json, run the board as normal `sudo python main.py` with whatever flags you choose to use.
+7. Watch your team lose, try not to cry, cry a lot.
+
 ### YAHOO SETUP STUFF
 Okay, so Yahoo is gonna be a bit funky. 
 1. First, go to https://developer.yahoo.com/ then 'My Apps' and then 'YDN Apps'.
@@ -28,6 +38,8 @@ Okay, so Yahoo is gonna be a bit funky.
 Woo, you've technically created a Yahoo App and you will see two important pieces of information: the Client ID (Consumer Key), and Client Secret(Consumer Secret), which will look like long strings of random letters and numbers.
 You will need to enter these two pieces of information into the config, along with your League ID. 
 When you run this for the first time, you're going to get some Yahoo stuff happening - a browser window will pop up (if possible), and a link to that browser window will also appear in the console. It'll look similar to something like `https://api.login.yahoo.com/oauth2/request_auth?client_id=CLIENTIDHERE&redirect_uri=oob&language=en-us&response_type=code` and this is normal. If you don't get the browser window popping up, copy and paste this URL into a browser window, and log into Yahoo to authorise the scoreboard. Once you log in, you'll be given a code, which you'll need to type into the console. This is just to authorise the app, and a `token.json` file will be generated into an `./auth` directory so that this doesn't happen every time.
+
+After this, run `sudo pip install yahoo_oauth` so that you have the required library to interact with Yahoo.
 
 I _think_ this should be all the info people need - feel free to reach out if you need more help!
 
@@ -113,18 +125,31 @@ Finally, here's the command he used.
 sudo python main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --led-slowdown-gpio=2
 ```
 
-## Usage
+### Configuration
 Copy the config.json.example file from the root folder, save it as config.json and set the values you need:
 
-* ```platform``` - this can only currently be set to sleeper or yahoo. ESPN is coming soon! If you put ESPN (or anything else, really) here the board will fail because I forgot to put error checking in and only noticed now. Oops!
-* ```swid``` - this is for ESPN and won't do anything yet
-* ```s2``` - this is for ESPN and won't do anything yet
-* ```league_id``` - this value can be found in the Sleeper URL: ```https://sleeper.app/leagues/<league_id>/team```
-* ```user_id``` - Run the following command, value will be listed in the output. Use the username that you use to login to Sleeper: ```curl "https://api.sleeper.app/v1/user/<username>"```
-* ```consumer_key``` - This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above
-* ```consumer_secret``` - This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above
-* ```league_id``` - You should be able to find this info for your Yahoo league somewhere in the main page, possibly? A buddy sent me all his info so I actually don't know for certain. But if he found it, you should be able to.
-* ```game_code``` - Don't change this! It corresponds to "NFL" for some reason in the Yahoo API. It changes yearly. This needs to be automated but I have forgotten how I figured this info out because I've been working on this stuff for _way_ too long recently.
+```
+platform - set this to either sleeper, yahoo, or espn.
+
+ESPN
+league_id           Set this to your ESPN league ID. This is a code that can be found in the URL after leagueId= when you visit your team homepage/roster page.
+team_id             Set this to your ESPN team ID. This is a number that can be found in the URL after teamId= when you visit your team homepage/roster page.
+swid                In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the SWID Content data and paste it here INCLUDING THE { BRACES }.
+espn_s2             In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the espn_s2 Content data and paste it here.
+
+SLEEPER
+league_id           this value can be found in your Sleeper league's URL: https://sleeper.app/leagues/<league_id>/team
+user_id             Run the following command, value will be listed in the output. Replace <username> with the username that you use to login to Sleeper: curl "https://api.sleeper.app/v1/user/<username>"
+
+YAHOO
+consumer_key        This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
+consumer_secret     This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
+league_id           You should be able to find this info in the URL, I'm not positive where but it should be in there (haven't seen it)
+game_code           Don't change this! It corresponds to "NFL" for some reason in the Yahoo API. It changes yearly. This needs to be automated but I have forgotten how I figured this info out because I've been working on this stuff for _way_ too long recently.
+
+year                This corresponds to this year because things will break without this and I haven't gotten around to pulling this info (can't just grab the date info because the season goes into 2022)
+debug               Just a flag that prints out more debug info.
+```
 
 Now, in a terminal, cd to the fantasy-football-scoreboard folder and run this command. 
 ```
@@ -134,6 +159,9 @@ sudo python main.py
 ```
 sudo python main.py --led-gpio-mapping=adafruit-hat
 ```
+
+### Troubleshooting
+If you run `git fetch` or something and get `error: cannot open .git/FETCH_HEAD: Permission denied` then run the command `sudo chown -R $(whoami) .git/` which will fix the permissions for git. Re-run the failed command.
 
 ### Flags
 Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix/) library to configure your screen.

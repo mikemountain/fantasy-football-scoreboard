@@ -9,17 +9,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 NEED TO INSTALL YFPY
 
-## [1.0.0] - 2021-09-06
+## [1.0.0] - 2021-09-12
 
 ### Added
 - ESPN added too!!!!!!
 
 ### Changed
 - readme
+- score update rate changed to every 10 seconds
 
 ### Removed
 
 ### Fixed
+- better way of checking Sleeper scores
 
 ## [0.1.0] - 2021-09-04
 

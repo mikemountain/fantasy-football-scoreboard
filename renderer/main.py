@@ -67,7 +67,7 @@ class MainRenderer:
             t.sleep(21600)
         # thursday after 8pm est until tuesday 1am (hopefully else should catch it)
         else:
-            debug.info('Live State, checking every 20s')
+            debug.info('Live State, checking every 5s')
             # Draw the current game
             self._draw_game()
         debug.info('ping render_game')
@@ -298,12 +298,12 @@ class MainRenderer:
                 opp_score = matchup['opp_score']
                 user_score = matchup['user_score']
                 self.data.needs_refresh = True
-                t.sleep(20 + extra_sleep)
+                t.sleep(5 + extra_sleep)
             else:
                 # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
                 self.draw.line((0, 0) + (self.width, 0), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                t.sleep(20)
+                t.sleep(5)
 
     # I think this is fine?
     def _draw_post_game(self):

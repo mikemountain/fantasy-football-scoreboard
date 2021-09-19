@@ -14,7 +14,7 @@
         "consumer_key": "",
         "consumer_secret": "",
         "league_id": "",
-        "game_code": "406"
+        "game_id": "406"
     },
     "year": "2021",
     "debug": false

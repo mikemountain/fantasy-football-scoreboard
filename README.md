@@ -161,7 +161,8 @@ sudo python main.py --led-gpio-mapping=adafruit-hat
 ```
 
 ### Troubleshooting
-If you run `git fetch` or something and get `error: cannot open .git/FETCH_HEAD: Permission denied` then run the command `sudo chown -R $(whoami) .git/` which will fix the permissions for git. Re-run the failed command.
+* If you run `git fetch` or something and get `error: cannot open .git/FETCH_HEAD: Permission denied` then run the command `sudo chown -R $(whoami) .git/` which will fix the permissions for git. Re-run the failed command.
+* If using Yahoo, you may need to run `mkdir auth; sudo chmod 0777 auth/` if you get an `IOError: [Errno 13] Permission denied` error.
 
 ### Flags
 Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix/) library to configure your screen.

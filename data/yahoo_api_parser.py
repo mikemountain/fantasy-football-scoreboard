@@ -23,13 +23,13 @@ class YahooFantasyInfo():
         token_file_path = os.path.join(authpath, "token.json")
         if os.path.isfile(token_file_path):
             with open(token_file_path) as yahoo_oauth_token:
-                auth_info = json.load(yahoo_oauth_token)
+                self.auth_info = json.load(yahoo_oauth_token)
         else:
             with open(token_file_path, "w") as yahoo_oauth_token:
-                json.dump(auth_info, yahoo_oauth_token)
+                json.dump(self.auth_info, yahoo_oauth_token)
 
-        if "access_token" in auth_info.keys():
-            self._yahoo_access_token = auth_info["access_token"]
+        if "access_token" in self.auth_info.keys():
+            self._yahoo_access_token = self.auth_info["access_token"]
 
         # complete OAuth2 3-legged handshake by either refreshing existing token or requesting account access
         # and returning a verification code to input to the command line prompt

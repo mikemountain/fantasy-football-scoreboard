@@ -48,12 +48,14 @@ class MainRenderer:
     def __render_game(self):
         # check if thursday and before 7pm est -> figure this out in utc
         time = self.data.get_current_date()
+        # print(time)
+        # print("week", self.week, "weekday", time.weekday(), "hour", time.hour)
         if self.week == 0 or (time.weekday() == 3 and time.hour >= 13):
-            debug.info('Scheduled State, waiting 1 hour')
+            debug.info('Scheduled State, waiting 15 min')
             self._draw_pregame()
-            t.sleep(1800)
+            t.sleep(900)
         # thursday before 8pm est
-        elif time.weekday() == 4 and 0 <= time.hour <= 1 and time.minute <= 15:
+        elif time.weekday() == 4 and time.hour == 0 and time.minute <= 15:
             debug.info('Pre-Game State, waiting 1 minute')
             self._draw_pregame()
             t.sleep(60)
@@ -65,7 +67,7 @@ class MainRenderer:
             t.sleep(21600)
         # thursday after 8pm est until tuesday 1am (hopefully else should catch it)
         else:
-            debug.info('Live State, checking every 20s')
+            debug.info('Live State, checking every 10s')
             # Draw the current game
             self._draw_game()
         debug.info('ping render_game')
@@ -109,7 +111,6 @@ class MainRenderer:
             if week == 0:
                 week = 1
             game_date = 'WEEK {}'.format(week)
-            avsize = self.avsize
             vs = 'VS'
             user_name = matchup['user_name']
             opp_name = matchup['opp_name']
@@ -125,22 +126,38 @@ class MainRenderer:
             self.draw.multiline_text((game_date_pos, 0), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
             self.draw.multiline_text((vs_pos + 1, 14), vs, fill=(255, 255, 255), font=self.font_vs, align="center")
             if len(user_name) > 12 or len(opp_name) > 12:
-              avsize = 23
-              opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((avsize, avsize), 1)
-              user_logo = Image.open('logos/{}.png'.format(user_av)).resize((avsize, avsize), 1)
-              # Set the position of each logo on screen.
-              opp_team_logo_pos = { "x": 0, "y": 9 }
-              user_team_logo_pos = { "x": 41, "y": 9 }
+                if self.data.platform == "yahoo":
+                    # Open the logo image file
+                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((23, 23), Image.BOX)
+                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((23, 23), Image.BOX)
+                elif self.data.platform == "espn":
+                    opp_logo = Image.open('logos/{}'.format(opp_av)).resize((23, 23), Image.BOX)
+                    user_logo = Image.open('logos/{}'.format(user_av)).resize((23, 23), Image.BOX)
+                else:
+                    # try png for sleeper
+                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((23, 23), Image.BOX)
+                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((23, 23), Image.BOX)
+                # Set the position of each logo on screen.
+                opp_team_logo_pos = { "x": 0, "y": 9 }
+                user_team_logo_pos = { "x": 41, "y": 9 }
             else:
-              self.draw.multiline_text((0, 6), opp_name, fill=(255, 255, 255), font=self.font_mini, align="left")
-              self.draw.multiline_text((self.width - self.font_mini.getsize(user_name)[0], self.height - self.font_mini.getsize(user_name)[1]), user_name, fill=(255, 255, 255), font=self.font_mini, align="left")
-              # Open the logo image file
-              # Draw the text on the Data image.
-              opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((self.avsize, self.avsize), 1)
-              user_logo = Image.open('logos/{}.png'.format(user_av)).resize((self.avsize, self.avsize), 1)
-              # Set the position of each logo on screen.
-              opp_team_logo_pos = { "x": 0, "y": 13 }
-              user_team_logo_pos = { "x": 45, "y": 7 }
+                self.draw.multiline_text((0, 6), opp_name, fill=(255, 255, 255), font=self.font_mini, align="left")
+                self.draw.multiline_text((self.width - self.font_mini.getsize(user_name)[0], self.height - self.font_mini.getsize(user_name)[1]), user_name, fill=(255, 255, 255), font=self.font_mini, align="left")
+                # Open the logo image file
+                if self.data.platform == "yahoo":
+                    # Open the logo image file
+                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), Image.BOX)
+                elif self.data.platform == "espn":
+                    opp_logo = Image.open('logos/{}'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}'.format(user_av)).resize((19, 19), Image.BOX)
+                else:
+                    # try png for sleeper
+                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), Image.BOX)
+                # Set the position of each logo on screen.
+                opp_team_logo_pos = { "x": 0, "y": 13 }
+                user_team_logo_pos = { "x": 45, "y": 7 }
             # Put the data on the canvas
             self.canvas.SetImage(self.image, 0, 0)
             # Put the images on the canvas
@@ -253,9 +270,17 @@ class MainRenderer:
                 # score_position = center_text(self.font.getsize(score)[0], 32)
                 # Set the position of each logo on screen.
                 self.draw.multiline_text((game_date_pos, -1), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
-                # Open the logo image file
-                opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
-                user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
+                if self.data.platform == "yahoo":
+                    # Open the logo image file
+                    opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), Image.BOX)
+                elif self.data.platform == "espn":
+                    opp_logo = Image.open('logos/{}'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}'.format(user_av)).resize((19, 19), Image.BOX)
+                else:
+                    # try png for sleeper/espn (hopefully)
+                    opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), Image.BOX)
+                    user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), Image.BOX)
                 # Set the position of each logo on screen.
                 opp_team_logo_pos = { "x": 0, "y": 0 }
                 user_team_logo_pos = { "x": 45, "y": 0 }
@@ -273,12 +298,12 @@ class MainRenderer:
                 opp_score = matchup['opp_score']
                 user_score = matchup['user_score']
                 self.data.needs_refresh = True
-                t.sleep(20 + extra_sleep)
+                t.sleep(10 + extra_sleep)
             else:
-                # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 1 min.
-                self.draw.line((0, 0) + (self.width, 0), fill=128)
+                # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 30s.
+                self.draw.line((0, self.height) + (self.width, self.height), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                t.sleep(20)
+                t.sleep(30)
 
     # I think this is fine?
     def _draw_post_game(self):
@@ -344,8 +369,17 @@ class MainRenderer:
             self.draw.multiline_text((game_date_pos, 0), game_date, fill=(255, 255, 255), font=self.font_mini, align="center")
             self.draw.multiline_text((result_pos, 9), result, fill=(255, 255, 255), font=self.font_res, align="center")
             # Open the logo image file
-            opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), 1)
-            user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), 1)
+            if self.data.platform == "yahoo":
+                # Open the logo image file
+                opp_logo = Image.open('logos/{}.jpg'.format(opp_av)).resize((19, 19), Image.BOX)
+                user_logo = Image.open('logos/{}.jpg'.format(user_av)).resize((19, 19), Image.BOX)
+            elif self.data.platform == "espn":
+                opp_logo = Image.open('logos/{}'.format(opp_av)).resize((19, 19), Image.BOX)
+                user_logo = Image.open('logos/{}'.format(user_av)).resize((19, 19), Image.BOX)
+            else:
+                # try png for sleeper/espn (hopefully)
+                opp_logo = Image.open('logos/{}.png'.format(opp_av)).resize((19, 19), Image.BOX)
+                user_logo = Image.open('logos/{}.png'.format(user_av)).resize((19, 19), Image.BOX)
             # Set the position of each logo on screen.
             opp_team_logo_pos = { "x": 0, "y": 0 }
             user_team_logo_pos = { "x": 45, "y": 0 }

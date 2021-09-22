@@ -1,7 +1,10 @@
 # fantasy-football-scoreboard
 ![I promise to change this picture when I actually build my own](imgs/Scoreboard.jpg)
 
-Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and the Sleeper fantasy platform.
+Display your favourite fantasy football team score on an raspberry pi powered LED matrix. Currently supports 64x32 boards only, and EITHER the Sleeper OR YAHOO fantasy platforms! We have Yahoo!!!
+
+### NFL LED Scoreboard
+Hey, I also made an [NFL LED scoreboard](https://github.com/mikemountain/nfl-led-scoreboard), which you really should go check out and star. Because, let's face it, you're gonna hate seeing your fantasy team after a while.
 
 ### Credit and inpsiration
 This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnshred/nhl-led-scoreboard), who based THEIR project off of the [mlb-led-scoreboard](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard). Go check them out, and start watching hockey if you don't already (and baseball too but I love hockey more (go Leafs!)).
@@ -9,19 +12,47 @@ This project was inspired by the [nhl-led-scoreboard](https://github.com/riffnsh
 ### Donate
 <a href="https://paypal.me/themikemountain/"><img src="https://github.com/andreostrovsky/donate-with-paypal/blob/master/dark.svg" height="40"></a>
 
-If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
+If you enjoyed this project, my NFL project, or if you're just feeling generous, consider buying me a beer. Cheers! :beers: 
+You can also PM me on reddit under /u/mikemountain if you need help but don't think it requires an issue!
 
-## Features (v0.0.5)
+## Features (v1.0.0)
+
+### UPGRADING TO v1.0.0
+There have been some decent changes since v0.0.5. Check the Troubleshooting section if you get any errors running the following steps, but to get to this latest version:
+1. Run the command `git stash`. This will take any "local changes" you made (such as to the config, etc) and "store" them so that you can update the local code
+2. Run the command `git fetch && git checkout master`. This will tell your scoreboard to look for new updates, and then switch to the main code branch.
+3. Run the command `git pull`. This will pull down all the latest changes to your board.
+4. Run the command `cp config.json.example config.json`. This will make a copy of the example config to use as your regular config file.
+5. Run the command `nano config.json` and then edit in the fields you require (steps for Yahoo and ESPN are further below in the README)
+6. After you've set up the config.json, run the board as normal `sudo python main.py` with whatever flags you choose to use.
+7. Watch your team lose, try not to cry, cry a lot.
+
+### YAHOO SETUP STUFF
+Okay, so Yahoo is gonna be a bit funky. 
+1. First, go to https://developer.yahoo.com/ then 'My Apps' and then 'YDN Apps'.
+2. On the lefthand panel, click 'Create an App'.
+3. Name the app something like "Fantasy Football Scoreboard" in the 'Application Name' block.
+4. In the Redirect URL section, just enter https://localhost:8080.
+5. Under the 'API Permissions' sections select 'Fantasy Sports' and then make sure that 'Read' is selected.
+6. Click create app.
+Woo, you've technically created a Yahoo App and you will see two important pieces of information: the Client ID (Consumer Key), and Client Secret(Consumer Secret), which will look like long strings of random letters and numbers.
+You will need to enter these two pieces of information into the config, along with your League ID. 
+When you run this for the first time, you're going to get some Yahoo stuff happening - a browser window will pop up (if possible), and a link to that browser window will also appear in the console. It'll look similar to something like `https://api.login.yahoo.com/oauth2/request_auth?client_id=CLIENTIDHERE&redirect_uri=oob&language=en-us&response_type=code` and this is normal. If you don't get the browser window popping up, copy and paste this URL into a browser window, and log into Yahoo to authorise the scoreboard. Once you log in, you'll be given a code, which you'll need to type into the console. This is just to authorise the app, and a `token.json` file will be generated into an `./auth` directory so that this doesn't happen every time.
+
+After this, run `sudo pip install yahoo_oauth` so that you have the required library to interact with Yahoo.
+
+I _think_ this should be all the info people need - feel free to reach out if you need more help!
+
+### ESPN SETUP STUFF
+You'll need a few pieces of info for ESPN to work - namely some cookies, your league ID and your team ID. You can get your league ID and team ID by just simply looking at the url when you click your team homepage/roster page. In Chrome, you can go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, and put the "content" of the SWID and the ESPN_S2 cookies in the config, INCLUDING THE {CURLY BRACES} of the SWID.
+Note!!! ESPN allows SVGs as team images. There's no easy way for the project to display SVGs, or even convert them to PNGs, so the actual best solution is this:
+1. Run the project. If there are SVGs it will download the files, then alert you, and then fail to run properly.
+2. Run `sudo apt-get update && apt-get install inkscape`
+3. Run `cd logos; find -name "*.svg" -exec sh -c 'sudo inkscape $1 --export-png=${1%.svg}.png' _ {} \;`
+If you see `Bitmap saved as:` lines, you should be able to `cd ..` back into the project and then run it again, and it should work. I apologise that it's a bit annoying but it's the way she goes (for now).
 
 ### Updating!
 Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.
-
-### Drafting
-If you've set your draft time, you'll see something like this. ![time til draft](imgs/draft.jpg) 
-
-Still working on getting something done for during the draft, that will be one of the next things to be worked on. 
-
-Post draft, for now you'll just be shown a countdown 'til kickoff. Hoping to add more to it soon but we'll see what can be done. ![kickoff when](imgs/kickoff.jpg)
 
 ### Pregame
 Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.
@@ -31,7 +62,7 @@ Starting at ~8pm Eastern Thursday, the score will be updated every 20s during ga
 
 Here's a gif that shows you what this would look like (excuse the shaky hands please, I was updating my testing REST API with one hand and filming with the other). ![score gif](imgs/big_play_and_updates.gif)
 
-I plan to set this so that it only does these checks during actual game times, because there's no real point in checking for game updates on non-game days or during non-game times on gamedays. Eventually, I'd like to only check for score updates if there's a player in the matchup who's playing (v1.0.0 release).
+I plan to set this so that it only does these checks during actual game times, because there's no real point in checking for game updates on non-game days or during non-game times on gamedays. Eventually, I'd like to only check for score updates if there's a player in the matchup who's playing.
 
 ### Postgame
 The board will stay in a post-game state until the next week, and will easily disappoint you with a quick glance. Loser is red, winner is green, with LOSS or WIN in between for that extra oomph. ![post game recap](imgs/accurate_postgame.jpg)
@@ -42,9 +73,7 @@ It displays a message that it's the off season. ![man it's offseason, take a bre
 ## Roadmap
 
 Future plans include:
-* using different platforms (Yahoo first and then ESPN most likely (if at all possible))
 * cycle through league scores on off-game times during the week (Post game could cycle through each matchup's result)
-* finding a better way to set the opening day than a config option (but it's only set once a year so this is pretty low prio)
 * different animations for good plays vs bad plays (nobody wants to see "BIG PLAY" and then see it's your opponent getting the points)
 * cycle through multiple teams in multiple leagues so you don't just have to pick your favourite team (although we all have one best league)
 * maybe some fun stuff for the draft like who just drafted whom and a countdown clock or something I don't know but it'll be flashy (can't do this yet with current sleeper api)
@@ -96,12 +125,31 @@ Finally, here's the command he used.
 sudo python main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --led-slowdown-gpio=2
 ```
 
-## Usage
-Open the config.json file from the root folder and change these values:
+### Configuration
+Copy the config.json.example file from the root folder, save it as config.json and set the values you need:
 
-* ```league_id``` - this value can be found in the Sleeper URL: ```https://sleeper.app/leagues/<league_id>/team```
-* ```user_id``` - Run the following command, value will be listed in the output. Use the username that you use to login to Sleeper: ```curl "https://api.sleeper.app/v1/user/<username>"```
-* ```opening_day``` - there will probably be a better way to get this info but meh, you have to change it once a year. Set it year, month, date format with dashes: 2019-09-05. Make sure it's the Thursday, the NFL Kickoff Game, the date the first game is on!
+```
+platform - set this to either sleeper, yahoo, or espn.
+
+ESPN
+league_id           Set this to your ESPN league ID. This is a code that can be found in the URL after leagueId= when you visit your team homepage/roster page.
+team_id             Set this to your ESPN team ID. This is a number that can be found in the URL after teamId= when you visit your team homepage/roster page.
+swid                In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the SWID Content data and paste it here INCLUDING THE { BRACES }.
+espn_s2             In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the espn_s2 Content data and paste it here.
+
+SLEEPER
+league_id           this value can be found in your Sleeper league's URL: https://sleeper.app/leagues/<league_id>/team
+user_id             Run the following command, value will be listed in the output. Replace <username> with the username that you use to login to Sleeper: curl "https://api.sleeper.app/v1/user/<username>"
+
+YAHOO
+consumer_key        This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
+consumer_secret     This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
+league_id           You should be able to find this info in the URL, I'm not positive where but it should be in there (haven't seen it)
+game_code           Don't change this! It corresponds to "NFL" for some reason in the Yahoo API. It changes yearly. This needs to be automated but I have forgotten how I figured this info out because I've been working on this stuff for _way_ too long recently.
+
+year                This corresponds to this year because things will break without this and I haven't gotten around to pulling this info (can't just grab the date info because the season goes into 2022)
+debug               Just a flag that prints out more debug info.
+```
 
 Now, in a terminal, cd to the fantasy-football-scoreboard folder and run this command. 
 ```
@@ -111,6 +159,10 @@ sudo python main.py
 ```
 sudo python main.py --led-gpio-mapping=adafruit-hat
 ```
+
+### Troubleshooting
+* If you run `git fetch` or something and get `error: cannot open .git/FETCH_HEAD: Permission denied` then run the command `sudo chown -R $(whoami) .git/` which will fix the permissions for git. Re-run the failed command.
+* If using Yahoo, you may need to run `mkdir auth; sudo chmod 0777 auth/` if you get an `IOError: [Errno 13] Permission denied` error.
 
 ### Flags
 Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix/) library to configure your screen.

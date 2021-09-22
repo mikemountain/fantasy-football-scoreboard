@@ -49,10 +49,12 @@ class Data:
 
     def get_week(self):   
         week_info = requests.get('http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
-        today = datetime.today()
+        today = self.get_current_date()
         if today < datetime.strptime(week_info['leagues'][0]['calendar'][0]['endDate'], "%Y-%m-%dT%H:%MZ"):
             print(today < datetime.strptime(week_info['leagues'][0]['calendar'][0]['endDate'], "%Y-%m-%dT%H:%MZ"))
             return 0
+        elif (today.weekday() == 1 and today.hour > 5) or today.weekday() == 2 or (today.weekday() == 3 and today.hour < 13):
+            return week_info['week']['number'] - 1
         else:
             return week_info['week']['number']
         # days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days

@@ -9,7 +9,7 @@ from yahoo_oauth import OAuth2
 # https://fantasysports.yahooapis.com/fantasy/v2/games;game_codes=nfl I'm almost positive this is how to find the game id (406) but I totally forget now
 
 class YahooFantasyInfo():
-    def __init__(self, yahoo_consumer_key, yahoo_consumer_secret, game_id, league_id, week):
+    def __init__(self, yahoo_consumer_key, yahoo_consumer_secret, game_id, league_id, team_id, week):
         self.team_id = team_id
         self.league_id = league_id
         self.game_id = game_id

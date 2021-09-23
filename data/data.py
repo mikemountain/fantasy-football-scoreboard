@@ -39,7 +39,7 @@ class Data:
         if self.platform.lower() == "sleeper":
             return sleeper.SleeperFantasyInfo(self.config.sleeper_league_id, self.config.sleeper_user_id, self.week)
         elif self.platform.lower() == "yahoo":
-            return yahoo.YahooFantasyInfo(self.config.yahoo_consumer_key, self.config.yahoo_consumer_secret, self.config.yahoo_game_id, self.config.yahoo_league_id, self.week)
+            return yahoo.YahooFantasyInfo(self.config.yahoo_consumer_key, self.config.yahoo_consumer_secret, self.config.yahoo_game_id, self.config.yahoo_league_id, self.config.yahoo_team_id, self.week)
         elif self.platform.lower() == "espn":
             return espn.ESPNFantasyInfo(self.config.espn_league_id, self.config.espn_team_id, self.config.espn_swid, self.config.espn_s2, self.week, self.config.year)
         else:

@@ -10,6 +10,7 @@ from yahoo_oauth import OAuth2
 
 class YahooFantasyInfo():
     def __init__(self, yahoo_consumer_key, yahoo_consumer_secret, game_id, league_id, week):
+        self.team_id = team_id
         self.league_id = league_id
         self.game_id = game_id
         self.week = week
@@ -37,21 +38,21 @@ class YahooFantasyInfo():
         if not self.oauth.token_is_valid():
             self.oauth.refresh_access_token()
 
-        self.matchup = self.get_matchup(self.game_id, self.league_id, week)
+        self.matchup = self.get_matchup(self.game_id, self.league_id, self.team_id, week)
         self.get_avatars(self.matchup)
 
     # yeah these two are stupid and useless functions but right now I'm panicking trying to get this to work
     def refresh_matchup(self):
-        return self.get_matchup(self.game_id, self.league_id, self.week)
+        return self.get_matchup(self.game_id, self.league_id, self.team_id, self.week)
 
     def refresh_scores(self):
-        return self.get_matchup(self.game_id, self.league_id, self.week)
+        return self.get_matchup(self.game_id, self.league_id, self.team_id, self.week)
     
-    def get_matchup(self, game_id, league_id, week):
+    def get_matchup(self, game_id, league_id, team_id, week):
         self.refresh_access_token()
-        url = "https://fantasysports.yahooapis.com/fantasy/v2/league/{0}.l.{1};out=scoreboard;week={2}".format(self.game_id, self.league_id, week)
+        url = "https://fantasysports.yahooapis.com/fantasy/v2/team/{0}.l.{1}.t.{2}/matchups;weeks={3}".format(self.game_id, self.league_id, self.team_id, week)
         response = self.oauth.session.get(url, params={'format': 'json'})
-        matchup = response.json()["fantasy_content"]["league"][1]["scoreboard"]["0"]["matchups"]
+        matchup = response.json()["fantasy_content"]["team"][1]["matchups"]
         matchup_info = {}
         for m in matchup:
             if not isinstance(matchup[m], int):
@@ -61,14 +62,14 @@ class YahooFantasyInfo():
                         if team[t]['team'][0][3]:
                             matchup_info['user_name'] = team[t]['team'][0][19]['managers'][0]['manager']['nickname']
                             matchup_info['user_av'] = team[t]['team'][0][19]['managers'][0]['manager']['nickname']
-                            matchup_info['user_av_location'] = team[t]['team'][0][19]['managers'][0]['manager']['image_url']
+                            matchup_info['user_av_location'] = team[t]['team'][0][5]['team_logos'][0]['team_logo']['url']
                             matchup_info['user_team'] = team[t]['team'][0][2]['name']
                             matchup_info['user_proj'] = team[t]['team'][1]['team_projected_points']['total']
                             matchup_info['user_score'] = float(team[t]['team'][1]['team_points']['total'])
                         else:
                             matchup_info['opp_name'] = team[t]['team'][0][19]['managers'][0]['manager']['nickname']
                             matchup_info['opp_av'] = team[t]['team'][0][19]['managers'][0]['manager']['nickname']
-                            matchup_info['opp_av_location'] = team[t]['team'][0][19]['managers'][0]['manager']['image_url']
+                            matchup_info['opp_av_location'] = team[t]['team'][0][5]['team_logos'][0]['team_logo']['url']
                             matchup_info['opp_team'] = team[t]['team'][0][2]['name']
                             matchup_info['opp_proj'] = team[t]['team'][1]['team_projected_points']['total']
                             matchup_info['opp_score'] = float(team[t]['team'][1]['team_points']['total'])
@@ -80,17 +81,14 @@ class YahooFantasyInfo():
         logospath = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'logos'))
         if not os.path.exists(logospath):
             os.makedirs(logospath, 0777)
-        filename = os.path.join(logospath, '{0}.jpg'.format(teams['user_name']))
+        self.get_avatar(logospath, teams['user_name'], teams['user_av_location'])
+        self.get_avatar(logospath, teams['opp_name'], teams['opp_av_location'])
+
+    def get_avatar(self, logospath, name, url):
+        filename = os.path.join(logospath, '{0}.jpg'.format(name))
         if not os.path.exists(filename):
-            debug.info('downloading avatar for {0}'.format(teams['user_name']))
-            r = requests.get(teams['user_av_location'], stream=True)
-            with open(filename, 'wb') as fd:
-                for chunk in r.iter_content(chunk_size=128):
-                    fd.write(chunk)
-        filename = os.path.join(logospath, '{0}.jpg'.format(teams['opp_name']))
-        if not os.path.exists(filename):
-            debug.info('downloading avatar for {0}'.format(teams['opp_name']))
-            r = requests.get(teams['opp_av_location'], stream=True)
+            debug.info('downloading avatar for {0}'.format(name))
+            r = requests.get(url, stream=True)
             with open(filename, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=128):
                     fd.write(chunk)

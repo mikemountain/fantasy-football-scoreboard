@@ -19,6 +19,7 @@ class ScoreboardConfig:
         self.yahoo_consumer_secret = json["yahoo"]["consumer_secret"]
         self.yahoo_game_id = json["yahoo"]["game_id"]
         self.yahoo_league_id = json["yahoo"]["league_id"]
+        self.yahoo_team_id = json["yahoo"]["team_id"]
 
         self.espn_s2 = json["espn"]["espn_s2"]
         self.espn_swid = json["espn"]["swid"]

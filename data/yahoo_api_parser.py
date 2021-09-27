@@ -35,8 +35,6 @@ class YahooFantasyInfo():
         # complete OAuth2 3-legged handshake by either refreshing existing token or requesting account access
         # and returning a verification code to input to the command line prompt
         self.oauth = OAuth2(None, None, from_file=token_file_path)
-        if not self.oauth.token_is_valid():
-            self.oauth.refresh_access_token()
 
         self.matchup = self.get_matchup(self.game_id, self.league_id, self.team_id, week)
         self.get_avatars(self.matchup)
@@ -96,3 +94,4 @@ class YahooFantasyInfo():
     def refresh_access_token(self):
         if not self.oauth.token_is_valid():
             self.oauth.refresh_access_token()
+            self.oauth.session = self.oauth.oauth.get_session(token=self.oauth.access_token)

@@ -122,7 +122,7 @@ def get_draft(league_id):
         drafts = requests.get(url)
         drafts = drafts.json()
         # this should obv be variable but it'll change once per year so
-        draft = [d for d in drafts if d['season'] == '2021']
+        draft = [d for d in drafts if d['season'] == '2022']
         return draft[0]
     except requests.exceptions.RequestException as e:
         print("Error encountered, Can't reach Sleeper API", e)

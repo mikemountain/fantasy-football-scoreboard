@@ -1,4 +1,9 @@
-from rgbmatrix import RGBMatrixOptions, graphics
+# try:
+#     from rgbmatrix import RGBMatrixOptions, graphics
+# except:
+#     from RGBMatrixEmulator import RGBMatrixOptions, graphics
+
+from RGBMatrixEmulator import RGBMatrixOptions
 import collections
 import argparse
 import os
@@ -40,11 +45,6 @@ def args():
   parser.add_argument("--led-pixel-mapper", action="store", help="Apply pixel mappers. e.g \"Rotate:90\"", default="", type=str)
   parser.add_argument("--led-row-addr-type", action="store", help="0 = default; 1 = AB-addressed panels. (Default: 0)", default=0, type=int, choices=[0,1])
   parser.add_argument("--led-multiplexing", action="store", help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)
-
-  # User Options
-  # these are broken atm
-  # parser.add_argument("--user-id", action="store", help="ID of your fantasy user. Change the default in the config.json", type=int)
-  # parser.add_argument("--league-id", action="store", help="ID of your sleeper fantasy league. Change the default in the config.json,", type=int)
 
   return parser.parse_args()
 

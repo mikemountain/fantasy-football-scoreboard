@@ -7,8 +7,8 @@
         "espn_s2": ""
     },
     "sleeper": {
-        "league_id": "",
-        "user_id": ""
+        "league_id": "860710868244107264",
+        "user_id": "100335396726390784"
     },
     "yahoo":{
         "consumer_key": "",
@@ -17,6 +17,5 @@
         "league_id": "",
         "game_id": "406"
     },
-    "year": "2022",
     "debug": false
 }

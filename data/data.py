@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 import math
-import sleeper_api_parser as sleeper
-import yahoo_api_parser as yahoo
-import espn_api_parser as espn
+import data.sleeper_api_parser as sleeper
+import data.yahoo_api_parser as yahoo
+import data.espn_api_parser as espn
 import debug
 import requests
 
@@ -15,7 +15,6 @@ class Data:
 
         # Get what week it is
         self.week = self.get_week()
-        # self.week = 1
 
         # which platform are we using
         self.platform = self.config.platform
@@ -25,14 +24,7 @@ class Data:
         self.needs_refresh = True
         self.check_scores = True
 
-        # self.refresh_start()
-        # Fetch the teams info
-        # self.teams_info = sleeper.get_teams(self.config.league_id)
-        # self.roster_id = sleeper.get_roster_id(self.teams_info, self.user_id)
-        # self.my_players = self.get_players()
-        # self.matchup = sleeper.get_matchup(self.roster_id, self.league_id, self.week, self.teams_info)
         self.matchup = self.api.matchup
-        # print(self.matchup)
 
     def choose_api(self):
         debug.info(self.platform.lower())
@@ -49,19 +41,14 @@ class Data:
 
     def get_week(self):   
         week_info = requests.get('http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
-        today = datetime.today()
-        if today < datetime.strptime(week_info['leagues'][0]['calendar'][0]['endDate'], "%Y-%m-%dT%H:%MZ"):
-            print(today < datetime.strptime(week_info['leagues'][0]['calendar'][0]['endDate'], "%Y-%m-%dT%H:%MZ"))
+        if week_info['season']['type'] != 2:
             return 0
         else:
             return week_info['week']['number']
-        # days_since_start = (today - datetime.strptime(self.config.opening_day, "%Y-%m-%d")).days
-        # week = int(math.floor((days_since_start / 7) + 1))
-        # return week
 
     def get_current_date(self):
-        # pretty dumb function but I use this to test in off season
-        return datetime.utcnow()
+        # pretty dumb function but whatever
+        return datetime.now(timezone.utc)
 
     def refresh_matchup(self):
         self.matchup = self.api.refresh_matchup()

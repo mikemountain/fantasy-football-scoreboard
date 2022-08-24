@@ -1,6 +1,12 @@
 from data.scoreboard_config import ScoreboardConfig
 from renderer.main import MainRenderer
-from rgbmatrix import RGBMatrix
+
+# try:
+#     from rgbmatrix import RGBMatrix
+# except ImportError:
+#     from RGBMatrixEmulator import RGBMatrix
+from RGBMatrixEmulator import RGBMatrix
+
 from utils import args, led_matrix_options
 from data.data import Data
 import debug

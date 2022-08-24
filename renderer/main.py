@@ -1,5 +1,10 @@
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
-from rgbmatrix import graphics
+# try:
+#     from rgbmatrix import graphics
+# except ImportError:
+#     from RGBMatrixEmulator import graphics
+
+from RGBMatrixEmulator import RGBMatrix
 from utils import center_text
 from calendar import month_abbr
 from renderer.screen_config import screenConfig
@@ -29,15 +34,7 @@ class MainRenderer:
 
     def render(self):
         while True:
-            debug.info(self.week)
-            if self.week < 0:
-                # self.__render_off_season()
-                # draft shit doesn't work yet, don't push broken code dummy
-                debug.info('render draft info')
-                debug.info(self.data.user_id)
-                self.__render_draft()
-            # weeks 1-17, in season
-            elif self.week >= 0 and self.week < 18:
+            if self.week > 0 and self.week < 19:
                 debug.info('render game')
                 self.__render_game()
             # weeks 18+, off season
@@ -46,53 +43,36 @@ class MainRenderer:
                 self.__render_off_season()
 
     def __render_game(self):
-        # check if thursday and before 7pm est -> figure this out in utc
+        debug.info('ping render_game')
         time = self.data.get_current_date()
-        # print(time)
-        # print("week", self.week, "weekday", time.weekday(), "hour", time.hour)
-        if self.week == 0 or (time.weekday() == 3 and time.hour >= 13):
+        debug.info(time)
+        # check if thursday and before 23h00 UTC
+        if time.weekday() == 3 and time.hour <= 23 and time.minute <= 59:
             debug.info('Scheduled State, waiting 15 min')
             self._draw_pregame()
             t.sleep(900)
-        # thursday before 8pm est
+        # friday before 00h15 UTC
         elif time.weekday() == 4 and time.hour == 0 and time.minute <= 15:
             debug.info('Pre-Game State, waiting 1 minute')
             self._draw_pregame()
             t.sleep(60)
-        # tuesday 1am until week change
-        elif (time.weekday() == 1 and time.hour > 5) or (1 < time.weekday() < 4):
+        # tuesday 06h00 UTC until week change
+        elif (time.weekday() == 1 and time.hour >= 6) or (1 < time.weekday() < 4):
             debug.info('Final State, waiting 6 hours')
             self._draw_post_game()
             # sleep 6 hours
+            # may as well just unplug or turn off tbh
             t.sleep(21600)
-        # thursday after 8pm est until tuesday 1am (hopefully else should catch it)
+        # friday after 00h15 UTC until tuesday 06h00 UTC 
         else:
             debug.info('Live State, checking every 10s')
             # Draw the current game
             self._draw_game()
-        debug.info('ping render_game')
 
     def __render_off_season(self):
         debug.info('ping_off_season')
         self._draw_off_season()
         t.sleep(86400) # sleep 24 hours
-
-    def __render_draft(self):
-        self.data.refresh_draft()
-        # roster = self.data.roster
-        draft_status = self.data.draft_status
-        if draft_status == "pre_draft":
-            debug.info('ping_pre_draft')
-            self._draw_pre_draft()
-            t.sleep(self.data.sleep)
-        elif draft_status == "drafting":
-            debug.info('ping_draft')
-            self._draw_draft()
-            t.sleep(10)
-        else:
-            debug.info('ping_draft_complete')
-            self._draw_draft_complete()
-            t.sleep(self.data.sleep)
 
     # need to keep working on this
     def _draw_pregame(self):
@@ -300,6 +280,7 @@ class MainRenderer:
                 self.data.needs_refresh = True
                 t.sleep(10 + extra_sleep)
             else:
+                # this doesn't work lul need 2 fix
                 # (Need to make the screen run on it's own) If connection to the API fails, show bottom red line and refresh in 30s.
                 self.draw.line((0, self.height) + (self.width, self.height), fill=128)
                 self.canvas = self.matrix.SwapOnVSync(self.canvas)
@@ -422,46 +403,12 @@ class MainRenderer:
             t.sleep(0.02)
 
     def _draw_off_season(self):
+        # Refresh canvas
+        self.image = Image.new('RGB', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
         off_pos = center_text(self.font.getsize("OFF")[0], 32)
         szn_pos = center_text(self.font.getsize("SEASON")[0], 32)
         self.draw.multiline_text((off_pos,3), "OFF", fill=(255, 255, 255), font=self.font, align="center")
         self.draw.multiline_text((szn_pos, self.font.getsize("SEASON")[1]+4), "SEASON", fill=(255, 255, 255), font=self.font, align="center")
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
-
-    # def _draw_draft(self):
-    #     debug.info('testing this')
-    #     debug.info(self.data.get_players())
-    #     result_pos = center_text(self.font_res.getsize('ROSTER')[0], 32) # this was font_mini before, was that on purpose?
-    #     self.draw.multiline_text((result_pos, 1), result, fill=(255, 255, 255), font=self.font_res, align="center")
-
-    # should 1000000% consolidate these into a single function
-    def _draw_pre_draft(self):
-        draft_dt = self.data.draft_dt
-        off_pos = center_text(self.font.getsize("DRAFT")[0], 32)
-        szn_pos = center_text(self.font.getsize(draft_dt)[0], 32)
-        self.draw.multiline_text((off_pos,3), "DRAFT", fill=(255, 255, 255), font=self.font, align="center")
-        self.draw.multiline_text((szn_pos, self.font.getsize(draft_dt)[1]+4), draft_dt, fill=(255, 255, 255), font=self.font, align="center")
-        self._refresh_image()
-
-    # will eventually hopefully figure out wtf to do here...
-    def _draw_draft(self):
-        off_pos = center_text(self.font.getsize("WOWEE")[0], 32)
-        szn_pos = center_text(self.font.getsize("IT'S NOW")[0], 32)
-        self.draw.multiline_text((off_pos,3), "WOWEE", fill=(255, 255, 255), font=self.font, align="center")
-        self.draw.multiline_text((szn_pos, self.font.getsize("IT'S NOW")[1]+4), "IT'S NOW", fill=(255, 255, 255), font=self.font, align="center")
-        self._refresh_image()
-
-    def _draw_draft_complete(self):
-        off_pos = center_text(self.font.getsize('KICKOFF IN')[0], 32)
-        szn_pos = center_text(self.font.getsize(self.data.start_dt)[0], 32)
-        self.draw.multiline_text((off_pos,3), 'KICKOFF IN', fill=(255, 255, 255), font=self.font, align="center")
-        self.draw.multiline_text((szn_pos, self.font.getsize(self.data.start_dt)[1]+4), self.data.start_dt, fill=(255, 255, 255), font=self.font, align="center")
-        self._refresh_image()
-
-    def _refresh_image(self):
-        self.canvas.SetImage(self.image, 0, 0)
-        self.canvas = self.matrix.SwapOnVSync(self.canvas)
-        # Refresh the Data image.
-        self.image = Image.new('RGB', (self.width, self.height))
-        self.draw = ImageDraw.Draw(self.image)

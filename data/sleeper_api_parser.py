@@ -1,12 +1,49 @@
+from pprint import pprint
 import requests
 from datetime import datetime
 from utils import convert_time
+from unittest import mock
 import os
 import debug
 import json
 
 API_URL = "https://api.sleeper.app/v1/league/"
 
+def mocked_requests_get(*args, **kwargs):
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+    if args[0] == '0':
+        with open('test_data/matchup_1_start.json') as f:
+            j = json.load(f)
+        return MockResponse(j, 200)
+    elif args[0] == '1':
+        with open('test_data/matchup_1_play_1.json') as f:
+            j = json.load(f)
+        return MockResponse(j, 200)
+    elif args[0] == '2':
+        with open('test_data/matchup_1_play_2.json') as f:
+            j = json.load(f)
+        return MockResponse(j, 200)
+    elif args[0] == '3':
+        with open('test_data/matchup_1_play_3.json') as f:
+            j = json.load(f)
+        return MockResponse(j, 200)
+    elif args[0] == '4':
+        with open('test_data/matchup_1_play_4.json') as f:
+            j = json.load(f)
+        return MockResponse(j, 200)
+    elif args[0] == '5':
+        with open('test_data/matchup_1_final.json') as f:
+            j = json.load(f)
+        return MockResponse(j, 200)
+
+    return MockResponse(None, 404)
 
 class SleeperFantasyInfo():
     def __init__(self, league_id, user_id, week):
@@ -68,6 +105,37 @@ class SleeperFantasyInfo():
             return matchup_info
         except Exception as e:
             print("something bad?", e)
+
+    def get_test_scores(self, n):
+        """
+            get all matchups this week and find the matchup you care about
+        """
+        j = {}
+        if n == 0:
+            with open('test_data/matchup_1_start.json') as f:
+                j = json.load(f)
+        elif n == 1:
+            with open('test_data/matchup_1_play_1.json') as f:
+                j = json.load(f)
+        elif n == 2:
+            with open('test_data/matchup_1_play_2.json') as f:
+                j = json.load(f)
+        elif n == 3:
+            with open('test_data/matchup_1_play_3.json') as f:
+                j = json.load(f)
+        elif n == 4:
+            with open('test_data/matchup_1_play_4.json') as f:
+                j = json.load(f)
+        elif n == 5:
+            with open('test_data/matchup_1_final.json') as f:
+                j = json.load(f)
+        game = {}
+        for matchup in j:
+            if matchup['roster_id'] == 1:
+                game['user_score'] = matchup['points']
+            if matchup['roster_id'] != 1:
+                game['opp_score'] = matchup['points']
+        return game
 
     def get_points(self, game):
         debug.info('checking sleeper scores for game {}'.format(game))

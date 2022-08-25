@@ -1,12 +1,6 @@
+from rgbmatrix import graphics
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
-# try:
-#     from rgbmatrix import graphics
-# except ImportError:
-#     from RGBMatrixEmulator import graphics
-
-from RGBMatrixEmulator import RGBMatrix
 from utils import center_text
-from calendar import month_abbr
 from renderer.screen_config import screenConfig
 import time as t
 import debug
@@ -404,11 +398,20 @@ class MainRenderer:
 
     def _draw_off_season(self):
         # Refresh canvas
-        self.image = Image.new('RGB', (self.width, self.height))
-        self.draw = ImageDraw.Draw(self.image)
+        # self.image = Image.new('RGB', (self.width, self.height))
+        # self.draw = ImageDraw.Draw(self.image)
         off_pos = center_text(self.font.getsize("OFF")[0], 32)
         szn_pos = center_text(self.font.getsize("SEASON")[0], 32)
-        self.draw.multiline_text((off_pos,3), "OFF", fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((off_pos, 3), "OFF", fill=(255, 255, 255), font=self.font, align="center")
         self.draw.multiline_text((szn_pos, self.font.getsize("SEASON")[1]+4), "SEASON", fill=(255, 255, 255), font=self.font, align="center")
         self.canvas.SetImage(self.image, 0, 0)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        self.image = Image.new('RGB', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
+
+    def _draw_days_until_kickoff(self):
+        off_pos = center_text(self.font.getsize('KICKOFF IN')[0], 32)
+        szn_pos = center_text(self.font.getsize(self.data.start_dt)[0], 32)
+        self.draw.multiline_text((off_pos,3), 'KICKOFF IN', fill=(255, 255, 255), font=self.font, align="center")
+        self.draw.multiline_text((szn_pos, self.font.getsize(self.data.start_dt)[1]+4), self.data.start_dt, fill=(255, 255, 255), font=self.font, align="center")
+        self._refresh_image()

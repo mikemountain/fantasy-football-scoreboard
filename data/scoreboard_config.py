@@ -3,6 +3,7 @@ import json
 import os
 import requests
 
+
 class ScoreboardConfig:
     def __init__(self, filename_base, args):
         json = self.__get_config(filename_base)
@@ -10,6 +11,7 @@ class ScoreboardConfig:
         self.debug = json["debug"]
         self.platform = json["platform"]
         self.season = self._get_season()
+        self.testing = json["testing"]
 
         self.sleeper_league_id = json["sleeper"]["league_id"]
         self.sleeper_user_id = json["sleeper"]["user_id"]
@@ -26,21 +28,19 @@ class ScoreboardConfig:
         self.espn_league_id = json["espn"]["league_id"]
 
     def read_json(self, filename):
-        # Find and return a json file
-
         j = {}
         path = get_file(filename)
         if os.path.isfile(path):
             j = json.load(open(path))
+
         return j
 
     def _get_season(self):
-        year = requests.get('http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
+        year = requests.get(
+            'http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
         return year["season"]["year"]
 
     def __get_config(self, base_filename):
-        # Look and return config.json file
-
         filename = "{}.json".format(base_filename)
         reference_config = self.read_json(filename)
 

@@ -8,6 +8,7 @@ import requests
 
 # can get week from here http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard (leagues -> week -> number)
 
+
 class Data:
     def __init__(self, config):
         # Save the parsed config
@@ -39,8 +40,9 @@ class Data:
             print('You need to set one of ESPN, Yahoo, or Sleeper in the config file')
             return 0
 
-    def get_week(self):   
-        week_info = requests.get('http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
+    def get_week(self):
+        week_info = requests.get(
+            'http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
         if week_info['season']['type'] != 2:
             return 0
         else:
@@ -63,8 +65,12 @@ class Data:
         self.teams_info = self.api.get_teams(self.config.league_id)
 
     def get_players(self):
-        user = next((item for item in self.teams_info if item['id'] == self.user_id))
+        user = next(
+            (item for item in self.teams_info if item['id'] == self.user_id))
         return user['players']
+
+    def test_game(self, n):
+        return self.api.get_test_scores(n)
 
     # def refresh_draft(self):
     #     self.draft = sleeper.get_draft(self.league_id)
@@ -80,7 +86,8 @@ class Data:
 
     def refresh_start(self):
         self.sleep = 43200
-        start_delta = datetime.strptime("{} 20:20:00 EDT".format(self.config.opening_day), "%Y-%m-%d %H:%M:%S %Z") - datetime.now()
+        start_delta = datetime.strptime("{} 20:20:00 EDT".format(
+            self.config.opening_day), "%Y-%m-%d %H:%M:%S %Z") - datetime.now()
         self.start_dt = self.set_dt(start_delta)
 
     def set_dt(self, old_dt):
@@ -99,7 +106,7 @@ class Data:
             self.sleep = 60
         else:
             new_dt = '{} SECONDS'.format(old_dt.seconds)
-            self.sleep = 0.1 # turbo mode let's go
+            self.sleep = 0.1  # turbo mode let's go
         return new_dt
 
     def check_if_playing(self):

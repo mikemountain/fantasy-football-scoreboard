@@ -49,10 +49,7 @@ Note!!! ESPN allows SVGs as team images. There's no easy way for the project to 
 1. Run the project. If there are SVGs it will download the files, then alert you, and then fail to run properly.
 2. Run `sudo apt-get update && sudo apt-get install inkscape`
 3. Run `cd logos; find -name "*.svg" -exec sh -c 'sudo inkscape $1 --export-png=${1%.svg}.png' _ {} \;`
-If you see `Bitmap saved as:` lines, you should be able to `cd ..` back into the project and then run it again, and it should work. I apologise that it's a bit annoying but it's the way she goes (for now).
-
-### Updating!
-Run `bash update.sh` after a pull to make sure you have the necessary packages because I actually don't know a better way to do this.
+Ignore any messages that say "failed to get connection"; if you see `Bitmap saved as:` lines, you should be able to `cd ..` back into the project and run it again, and it should work. I apologise that it's a bit annoying but it's the way she goes (for now).
 
 ### Pregame
 Currently shows your opponent's avatar, and their name (if it's 12 characters or less, otherwise it won't fit, see the picture at the top of the README). ![nameless and shameless](imgs/no_team_name_preview.jpg) Hoping to incorporate projections in future releases.

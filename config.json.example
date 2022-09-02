@@ -17,6 +17,6 @@
         "league_id": "",
         "game_id": "406"
     },
-    "year": "2022",
-    "debug": false
+    "debug": false,
+    "testing": false
 }

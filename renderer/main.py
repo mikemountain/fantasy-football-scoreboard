@@ -33,7 +33,7 @@ class MainRenderer:
             if self.week > 0 and self.week < 19:
                 debug.info('render game')
                 self.__render_game()
-            # weeks 17+, off season
+            # weeks 18+, off season
             else:
                 debug.info('Off season state')
                 self.__render_off_season()

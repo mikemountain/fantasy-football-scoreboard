@@ -4,6 +4,7 @@ from utils import center_text
 from renderer.screen_config import screenConfig
 import time as t
 import debug
+from pprint import pprint
 import math
 
 class MainRenderer:
@@ -42,7 +43,7 @@ class MainRenderer:
         debug.info(time)
         # check if thursday and before 23h00 UTC
         if time.weekday() == 3 and time.hour <= 23 and time.minute <= 59:
-            debug.info('Scheduled State, waiting 15 min')
+            debug.info('Pre-Game State, waiting 15 min')
             self._draw_pregame()
             t.sleep(900)
         # friday before 00h15 UTC
@@ -82,8 +83,6 @@ class MainRenderer:
             if user_av is None:
                 user_av = 'noneLogo.png'
             week = self.data.week
-            if week == 0:
-                week = 1
             game_date = 'WEEK {}'.format(week)
             vs = 'VS'
             user_name = matchup['user_name']

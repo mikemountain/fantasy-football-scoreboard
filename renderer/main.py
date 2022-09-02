@@ -41,7 +41,7 @@ class MainRenderer:
     def __render_game(self):
         debug.info('ping render_game')
         time = self.data.get_current_date()
-        debug.info(time)
+        debug.info('date info:\nweekday: {}\nhour: {}\nminute: {}'.format(time.weekday(), time.hour, time.minute))
         # check if thursday and before 23h00 UTC
         if time.weekday() == 3 and time.hour <= 23 and time.minute <= 59:
             debug.info('Pre-Game State, waiting 15 min')

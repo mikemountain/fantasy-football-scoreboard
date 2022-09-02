@@ -1,4 +1,4 @@
-from RGBMatrixEmulator import RGBMatrix
+from rgbmatrix import RGBMatrix
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
 from utils import center_text
 from renderer.screen_config import screenConfig

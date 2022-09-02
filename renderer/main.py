@@ -1,7 +1,4 @@
-try:
-    from rgbmatrix import graphics
-except:
-    from RGBMatrixEmulator import graphics
+from rgbmatrix import graphics
 from PIL import Image, ImageFont, ImageDraw, ImageSequence
 from utils import center_text
 from renderer.screen_config import screenConfig

@@ -1,7 +1,4 @@
-try:
-    from rgbmatrix import RGBMatrixOptions, graphics
-except:
-    from RGBMatrixEmulator import RGBMatrixOptions, graphics
+from rgbmatrix import RGBMatrixOptions, graphics
 
 import collections
 import argparse

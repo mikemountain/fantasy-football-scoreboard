@@ -24,7 +24,7 @@ There have been some decent changes since v0.0.5. Check the Troubleshooting sect
 3. Run the command `git pull`. This will pull down all the latest changes to your board.
 4. Run the command `cp config.json.example config.json`. This will make a copy of the example config to use as your regular config file.
 5. Run the command `nano config.json` and then edit in the fields you require (steps for Yahoo and ESPN are further below in the README)
-6. After you've set up the config.json, run the board as normal `sudo python main.py` with whatever flags you choose to use.
+6. After you've set up the config.json, run the board as normal `sudo python3 main.py` with whatever flags you choose to use.
 7. Watch your team lose, try not to cry, cry a lot.
 
 ### YAHOO SETUP STUFF
@@ -117,9 +117,9 @@ If you are using any thing from raspberry pi 3+ to the newest versions with an A
 * Disable the on-board sound. You can find how to do it from the [Troubleshooting sections](https://github.com/hzeller/rpi-rgb-led-matrix#troubleshooting)
 * From the same section, run the command that remove the bluetooth firmware, unless you use any bluetooth device with your pi.
 
-Finally, here's the command he used.
+Finally, here's the command to get 'er goin':
 ```
-sudo python main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --led-slowdown-gpio=2
+sudo python3 main.py --led-gpio-mapping=adafruit-hat-pwm --led-brightness=60 --led-slowdown-gpio=2
 ```
 
 ### Configuration

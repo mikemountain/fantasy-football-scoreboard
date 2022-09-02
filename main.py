@@ -1,7 +1,4 @@
-try:
-    from rgbmatrix import RGBMatrix
-except:
-    from RGBMatrixEmulator import RGBMatrix
+from rgbmatrix import RGBMatrix
 import debug
 from data.data_test import DataTest
 from data.data import Data

@@ -6,7 +6,7 @@ import data.espn_api_parser as espn
 import debug
 import requests
 
-# can get week from here http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard (leagues -> week -> number)
+API_URL = 'http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard'
 
 
 class Data:
@@ -16,6 +16,7 @@ class Data:
 
         # Get what week it is
         self.week = self.get_week()
+        self.season_type = self.get_season_type()
 
         # which platform are we using
         self.platform = self.config.platform
@@ -40,13 +41,17 @@ class Data:
             print('You need to set one of ESPN, Yahoo, or Sleeper in the config file')
             return 0
 
-    def get_week(self):
-        week_info = requests.get(
-            'http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').json()
-        if week_info['season']['type'] != 2:
-            return 0
+    def get_season_type(self):
+        # this is for that gap on espn where it's after the end of preseason, but there are like 12 days before the season starts
+        season_type = requests.get(API_URL).json()
+        if season_type['season']['type'] == 2 and season_type['leagues'][0]['season']['type']['type'] != 2:
+            return 'kickoff'
         else:
-            return week_info['week']['number']
+            return 'season'
+
+    def get_week(self):
+        week_info = requests.get(API_URL).json()
+        return week_info['week']['number']
 
     def get_current_date(self):
         # pretty dumb function but whatever

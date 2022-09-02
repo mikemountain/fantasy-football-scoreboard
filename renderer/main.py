@@ -41,9 +41,13 @@ class MainRenderer:
     def __render_game(self):
         debug.info('ping render_game')
         time = self.data.get_current_date()
-        debug.info('date info:\nweekday: {}\nhour: {}\nminute: {}'.format(time.weekday(), time.hour, time.minute))
+        # for the days after preseason ends, but there's still a lot of time before the season starts
+        if self.data.get_season_type() == 'kickoff':
+            debug.info('Pre-Kickoff State, waiting 6 hours')
+            self._draw_pregame()
+            t.sleep(21600)
         # check if thursday and before 23h00 UTC
-        if time.weekday() == 3 and time.hour <= 23 and time.minute <= 59:
+        elif time.weekday() == 3 and time.hour <= 23 and time.minute <= 59:
             debug.info('Pre-Game State, waiting 15 min')
             self._draw_pregame()
             t.sleep(900)

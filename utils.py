@@ -1,9 +1,8 @@
-# try:
-#     from rgbmatrix import RGBMatrixOptions, graphics
-# except:
-#     from RGBMatrixEmulator import RGBMatrixOptions, graphics
+try:
+    from rgbmatrix import RGBMatrixOptions, graphics
+except:
+    from RGBMatrixEmulator import RGBMatrixOptions, graphics
 
-from RGBMatrixEmulator import RGBMatrixOptions
 import collections
 import argparse
 import os

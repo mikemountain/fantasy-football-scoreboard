@@ -1,11 +1,44 @@
 # Changelog
 
 All notable changes to this project will hopefully be documented in this file.
-Expect maximum jank until 0.1.0, minimum. We're talking WD-40 and duct tape code.
+Still pretty janky.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres as best as I can bother to try 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+NEED TO INSTALL YFPY
+
+## [1.0.0] - 2021-09-12
+
+### Added
+- ESPN added too!!!!!!
+
+### Changed
+- readme
+- score update rate changed to every 10 seconds
+
+### Removed
+
+### Fixed
+- better way of checking Sleeper scores
+
+## [0.1.0] - 2021-09-04
+
+### Added
+- holy shit, Yahoo works
+- config example
+
+### Changed
+- had to change around the sleeper api file to make it flex with yahoo
+- the config stuff
+- updated README to include the Yahoo stuff, as well as a way to contact me without making an issue (if needed)
+
+### Removed
+- my own config which I never should have committed tbh
+- some of the drafting stuff, I never got it to work and there were higher priorities
+
+### Fixed
 
 ## [0.0.5] - 2020-10-11
 

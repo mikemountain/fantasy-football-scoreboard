@@ -34,7 +34,7 @@ class Data:
         elif self.platform.lower() == "yahoo":
             return yahoo.YahooFantasyInfo(self.config.yahoo_consumer_key, self.config.yahoo_consumer_secret, self.config.yahoo_game_id, self.config.yahoo_league_id, self.config.yahoo_team_id, self.week)
         elif self.platform.lower() == "espn":
-            return espn.ESPNFantasyInfo(self.config.espn_league_id, self.config.espn_team_id, self.config.espn_swid, self.config.espn_s2, self.week, self.config.year)
+            return espn.ESPNFantasyInfo(self.config.espn_league_id, self.config.espn_team_id, self.config.espn_swid, self.config.espn_s2, self.week, self.config.season)
         else:
             # this will break but I'll robustify it later
             print('You need to set one of ESPN, Yahoo, or Sleeper in the config file')

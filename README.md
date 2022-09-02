@@ -47,7 +47,7 @@ I _think_ this should be all the info people need - feel free to reach out if yo
 You'll need a few pieces of info for ESPN to work - namely some cookies, your league ID and your team ID. You can get your league ID and team ID by just simply looking at the url when you click your team homepage/roster page. In Chrome, you can go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, and put the "content" of the SWID and the ESPN_S2 cookies in the config, INCLUDING THE {CURLY BRACES} of the SWID.
 Note!!! ESPN allows SVGs as team images. There's no easy way for the project to display SVGs, or even convert them to PNGs, so the actual best solution is this:
 1. Run the project. If there are SVGs it will download the files, then alert you, and then fail to run properly.
-2. Run `sudo apt-get update && apt-get install inkscape`
+2. Run `sudo apt-get update && sudo apt-get install inkscape`
 3. Run `cd logos; find -name "*.svg" -exec sh -c 'sudo inkscape $1 --export-png=${1%.svg}.png' _ {} \;`
 If you see `Bitmap saved as:` lines, you should be able to `cd ..` back into the project and then run it again, and it should work. I apologise that it's a bit annoying but it's the way she goes (for now).
 

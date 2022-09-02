@@ -21,7 +21,7 @@
 #!/bin/bash
 echo "Installing required dependencies. This may take some time (10-20 minutes-ish)..."
 sudo apt-get update && sudo apt-get install python3-dev python3-pip python3-pillow libxml2-dev libxslt-dev -y
-sudo pip3 install pytz tzlocal requests
+sudo pip3 install pytz tzlocal requests datetime
 echo "Running rgbmatrix installation..."
 mkdir submodules
 cd submodules

@@ -1,3 +1,4 @@
+from rgbmatrix import RGBMatrix
 import debug
 from data.data_test import DataTest
 from data.data import Data
@@ -9,11 +10,6 @@ from renderer.main_test import MainRendererTest
 args = args()
 # Read scoreboard options from config.json if it exists
 config = ScoreboardConfig("config", args)
-
-if config.testing:
-    from RGBMatrixEmulator import RGBMatrix
-else:
-    from rgbmatrix import RGBMatrix
 
 
 SCRIPT_NAME = "Fantasy Football Scoreboard"

@@ -3,6 +3,7 @@ from datetime import datetime
 from utils import convert_time
 import os
 import debug
+from pprint import pprint
 import json
 
 API_URL = "https://fantasy.espn.com/apis/v3/games/ffl/seasons"
@@ -26,15 +27,13 @@ class ESPNFantasyInfo():
         return self.get_matchup()
 
     def get_matchup(self):
+        debug.info('getting matchup')
         """
             get all matchups this week and find the matchup you care about
         """
         url = '{0}/{1}/segments/0/leagues/{2}'.format(
             API_URL, self.year, self.league_id)
-        matchup_id = 0
         matchup_info = {}
-        if self.week == 0:
-            self.week = 1
         try:
             matchups = requests.get(url, cookies=self.cookies, params={
                                     "view": "mBoxscore"})
@@ -50,7 +49,7 @@ class ESPNFantasyInfo():
                     matchup_info['user_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
                     matchup_info['user_score'] = float(
-                        matchup['home']['rosterForCurrentScoringPeriod']['appliedStatTotal'])
+                        matchup['home'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
                     matchup_info['opp_name'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team']
                     matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))[
@@ -58,7 +57,7 @@ class ESPNFantasyInfo():
                     matchup_info['opp_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
                     matchup_info['opp_score'] = float(
-                        matchup['away']['rosterForCurrentScoringPeriod']['appliedStatTotal'])
+                        matchup['away'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
                 elif int(matchup['away']['teamId']) == self.team_id:
                     matchup_info['user_name'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team']
@@ -67,7 +66,7 @@ class ESPNFantasyInfo():
                     matchup_info['user_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
                     matchup_info['user_score'] = float(
-                        matchup['away']['rosterForCurrentScoringPeriod']['appliedStatTotal'])
+                        matchup['away'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
                     matchup_info['opp_name'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['team']
                     matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))[
@@ -75,16 +74,16 @@ class ESPNFantasyInfo():
                     matchup_info['opp_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
                     matchup_info['opp_score'] = float(
-                        matchup['home']['rosterForCurrentScoringPeriod']['appliedStatTotal'])
+                        matchup['home'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
             return matchup_info
         except requests.exceptions.RequestException as e:
             print("Error encountered, Can't reach ESPN API", e)
             return matchup_info
         except IndexError:
-            print("uh oh")
+            print("ESPN API Index Error in get_matchup")
             return matchup_info
         except Exception as e:
-            print("something bad?", e)
+            print("ESPN API Error in get_matchup", e)
 
     def get_teams(self):
         debug.info('getting teams')
@@ -96,7 +95,7 @@ class ESPNFantasyInfo():
                                  params={"view": "mTeam"})
             users = users.json()
             for user in users['teams']:
-                avatar = user['logo']
+                avatar = user.get('logo', 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/800px-National_Football_League_logo.svg.png')
                 team_id = user['id']
                 abbrev = user['abbrev']
                 team_name = user['location'] + ' ' + user['nickname']

@@ -69,7 +69,7 @@ class YahooFantasyInfo():
                             matchup_info['user_team'] = team[t]['team'][0][2]['name']
                             matchup_info['user_proj'] = team[t]['team'][1]['team_projected_points']['total']
                             matchup_info['user_score'] = float(
-                                team[t]['team'][1]['team_points']['total'])
+                                team[t]['team'][1].get('team_points', {}).get('total', 0)
                         else:
                             matchup_info['opp_name'] = team[t]['team'][0][19]['managers'][0]['manager']['nickname']
                             matchup_info['opp_av'] = team[t]['team'][0][19]['managers'][0]['manager']['nickname']
@@ -77,7 +77,7 @@ class YahooFantasyInfo():
                             matchup_info['opp_team'] = team[t]['team'][0][2]['name']
                             matchup_info['opp_proj'] = team[t]['team'][1]['team_projected_points']['total']
                             matchup_info['opp_score'] = float(
-                                team[t]['team'][1]['team_points']['total'])
+                                team[t]['team'][1].get('team_points', {}).get('total', 0)
         return matchup_info
 
     def get_avatars(self, teams):

@@ -129,23 +129,24 @@ Copy the config.json.example file from the root folder, save it as config.json a
 platform - set this to either sleeper, yahoo, or espn.
 
 ESPN
-league_id           Set this to your ESPN league ID. This is a code that can be found in the URL after leagueId= when you visit your team homepage/roster page.
-team_id             Set this to your ESPN team ID. This is a number that can be found in the URL after teamId= when you visit your team homepage/roster page.
-swid                In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the SWID Content data and paste it here INCLUDING THE { BRACES }.
-espn_s2             In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the espn_s2 Content data and paste it here.
+league_id               Set this to your ESPN league ID. This is a code that can be found in the URL after leagueId= when you visit your team homepage/roster page.
+team_id                 Set this to your ESPN team ID. This is a number that can be found in the URL after teamId= when you visit your team homepage/roster page.
+swid                    In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the SWID Content data and paste it here INCLUDING THE { BRACES }.
+espn_s2                 In Chrome, go to Preferences -> Advanced -> Content Settings -> Cookies -> See all cookies and site data, look for ESPN, copy the espn_s2 Content data and paste it here.
 
 SLEEPER
-league_id           this value can be found in your Sleeper league's URL: https://sleeper.app/leagues/<league_id>/team
-user_id             Run the following command, value will be listed in the output. Replace <username> with the username that you use to login to Sleeper: curl "https://api.sleeper.app/v1/user/<username>"
+league_id               This value can be found in your Sleeper league's URL: https://sleeper.app/leagues/<league_id>/team
+user_id                 Run the following command, value will be listed in the output. Replace <username> with the username that you use to login to Sleeper: curl "https://api.sleeper.app/v1/user/<username>"
 
 YAHOO
-consumer_key        This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
-consumer_secret     This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
-league_id           You should be able to find this info in the URL, I'm not positive where but it should be in there (haven't seen it)
-game_code           Don't change this! It corresponds to "NFL" for some reason in the Yahoo API. It changes yearly. This needs to be automated but I have forgotten how I figured this info out because I've been working on this stuff for _way_ too long recently.
+consumer_key            This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
+consumer_secret         This will be found in the YDN info that you generate using the Yahoo Setup Stuff section above.
+league_id               You should be able to find this info in the URL, I'm not positive where but it should be in there (haven't seen it)
+team_id                 You should be also able to find this info in the URL, I'm not positive where but it should be in there (haven't seen it)
+game_code               Don't change this! It corresponds to "NFL" for some reason in the Yahoo API. It changes yearly. This needs to be automated but I have forgotten how I figured this info out because I've been working on this stuff for _way_ too long recently.
 
-year                This corresponds to this year because things will break without this and I haven't gotten around to pulling this info (can't just grab the date info because the season goes into 2022)
-debug               Just a flag that prints out more debug info.
+debug                   Just a flag that prints out more debug info.
+testing                 Flag that sets testing (but this is broken, lol)
 ```
 
 Now, in a terminal, cd to the fantasy-football-scoreboard folder and run this command. 

@@ -182,11 +182,6 @@ Use the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/r
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 ```
-There are also flags to set your sleeper league ID and fantasy team ID to use instead of what's in the config (to show other people their teams quickly, for example)
-```
---league-id              Set your sleeper league ID
---team-id                Set your fantasy team ID
-```
 
 ## Licensing
 This project uses the GNU General Public License v3.0. If you intend to sell these, the code must remain open source and you at least have to tell your leaguemates how cool I am (please, I need this).

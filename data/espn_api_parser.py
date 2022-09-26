@@ -48,16 +48,22 @@ class ESPNFantasyInfo():
                         'avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['user_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
-                    matchup_info['user_score'] = float(
-                        matchup['home'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
+                    if 'pointsByScoringPeriod' in matchup['home']:
+                        matchup_info['user_score'] = float(matchup['home']['pointsByScoringPeriod'][str(self.week)])
+                    else:
+                        matchup_info['user_score'] = float(
+                            matchup['home'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
                     matchup_info['opp_name'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team']
                     matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))[
                         'avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['opp_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
-                    matchup_info['opp_score'] = float(
-                        matchup['away'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
+                    if 'pointsByScoringPeriod' in matchup['away']:
+                        matchup_info['opp_score'] = float(matchup['away']['pointsByScoringPeriod'][str(self.week)])
+                    else:
+                        matchup_info['opp_score'] = float(
+                            matchup['away'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
                 elif int(matchup['away']['teamId']) == self.team_id:
                     matchup_info['user_name'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['team']
@@ -65,16 +71,22 @@ class ESPNFantasyInfo():
                         'avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['user_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['away']['teamId']))['owner']
-                    matchup_info['user_score'] = float(
-                        matchup['away'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
+                    if 'pointsByScoringPeriod' in matchup['away']:
+                        matchup_info['user_score'] = float(matchup['away']['pointsByScoringPeriod'][str(self.week)])
+                    else:
+                        matchup_info['user_score'] = float(
+                            matchup['away'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
                     matchup_info['opp_name'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['team']
                     matchup_info['opp_av'] = next((item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))[
                         'avatar'].split("/")[-1].replace('.svg', '.png')
                     matchup_info['opp_team'] = next(
                         (item for item in self.teams_info if item['team_id'] == matchup['home']['teamId']))['owner']
-                    matchup_info['opp_score'] = float(
-                        matchup['home'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
+                    if 'pointsByScoringPeriod' in matchup['home']:
+                        matchup_info['opp_score'] = float(matchup['home']['pointsByScoringPeriod'][str(self.week)])
+                    else:
+                        matchup_info['opp_score'] = float(
+                            matchup['home'].get('rosterForCurrentScoringPeriod', {}).get('appliedStatTotal', 0))
             return matchup_info
         except requests.exceptions.RequestException as e:
             print("Error encountered, Can't reach ESPN API", e)

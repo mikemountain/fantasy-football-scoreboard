@@ -38,6 +38,7 @@ class MainRenderer:
                 debug.info('Off season state')
                 self.__render_off_season()
 
+    # TODO: figure out a more programmatic way of handling this in refactor
     def __render_game(self):
         debug.info('ping render_game')
         time = self.data.get_current_date()
@@ -46,18 +47,18 @@ class MainRenderer:
             debug.info('Pre-Kickoff State, waiting 6 hours')
             self._draw_pregame()
             t.sleep(21600)
-        # check if thursday and before 23h00 UTC
-        elif time.weekday() == 3 and time.hour <= 23 and time.minute <= 59:
+        # check if thursday and before 16h00 UTC (fixed for US Thanksgiving games)
+        elif time.weekday() == 3 and 9 <= time.hour <= 15 and time.minute <= 59:
             debug.info('Pre-Game State, waiting 15 min')
             self._draw_pregame()
             t.sleep(900)
-        # friday before 00h15 UTC
-        elif time.weekday() == 4 and time.hour == 0 and time.minute <= 15:
+        # thursday before 17h00 UTC
+        elif time.weekday() == 3 and time.hour == 16 and time.minute <= 29:
             debug.info('Pre-Game State, waiting 1 minute')
             self._draw_pregame()
             t.sleep(60)
         # tuesday 06h00 UTC until week change
-        elif (time.weekday() == 1 and time.hour >= 6) or (1 < time.weekday() < 4):
+        elif time.weekday() in [1, 2] or (time.weekday() == 3 and time.hour <= 8):
             debug.info('Final State, waiting 6 hours')
             self._draw_post_game()
             # sleep 6 hours

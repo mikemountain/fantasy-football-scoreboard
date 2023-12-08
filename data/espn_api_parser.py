@@ -102,7 +102,7 @@ class ESPNFantasyInfo():
             		avatar = user.get('logo', 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/800px-National_Football_League_logo.svg.png')
             		team_id = user['id']
             		abbrev = user['abbrev']
-            		team_name = user['location'] + ' ' + user['nickname']
+            		team_name = user.get('location', '') + ' ' + user.get('nickname', '')
             		owner = user.get('primaryOwner', 'Unknown Owner')
             		user_dict = {"abbrev": abbrev, "team_id": team_id, "owner": owner, "team": team_name, "avatar": avatar, "display_name": None}
             		user_info.append(user_dict)

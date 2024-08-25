@@ -5,7 +5,7 @@ import os
 from pprint import pprint
 import json
 
-API_URL = "https://fantasy.espn.com/apis/v3/games/ffl/seasons"
+API_URL = "https://lm-api.reads.fantasy.espn.com/apis/v3/games/ffl/seasons"
 
 
 class ESPNFantasyInfo():
